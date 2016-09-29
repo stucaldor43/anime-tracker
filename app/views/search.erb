@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Anime Tracker</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/css/uikit.css">
+        <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
+        <script type="text/javascript" src="/js/uikit.js"></script>
+    </head>
+    <body>
+        <div class="uk-grid">
+            <%= @header %>
+            <section class="uk-grid uk-width-1-1">
+            <% if @search_results.length > 0 %>
+                <% @search_results.each do |result| %>
+                    <figure class="uk-width-2-10 anime-item">
+                        <a href=<%= "/show/#{result['id']}" %>>
+                        <img src=<%= "#{result['cover_image']}" %> 
+                             width="300" height="300" class="anime-poster">
+                        <figcaption>
+                            <h2 class="anime-title"><%= result['title'] %></h2>
+                            <p class="anime-genres">
+                                <%= result['genres'].map {|genre| genre['name']}.
+                                    join(', ') %>
+                            </p>
+                        </figcaption>
+                        </a>
+                    </figure>
+                <% end %>
+            <% else %>
+                <h2>Sorry, 0 results were found</h2>
+            <% end %>
+            </section>
+            <%= @footer %>
+        </div>
+    </body>
+</html>
