@@ -1,11 +1,11 @@
 require 'sinatra'
 
 class Cache
-  attr_accessor :items, :item_limit
+  attr_accessor :items, :capacity
   
   def initialize
     @items = {}
-    @item_limit = 500
+    @capacity = 500
   end
   
   def getItem(key)
@@ -13,7 +13,7 @@ class Cache
   end
   
   def addItem(key, value)
-    if items.length >= item_limit
+    if items.length >= capacity
        key_to_delete = items.keys[0]
        items.delete(key_to_delete)
     end
