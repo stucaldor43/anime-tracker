@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>Login</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/css/uikit.css">
+        <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
+        <script type="text/javascript" src="/js/uikit.js"></script>
+    </head>
+    <body>
+       <div class="uk-grid">    
+           <%= @header %>
+           <section class="uk-width-1-1">
+           <form method="post" action="/login">
+               <input type="text" name="username" placeholder="username">
+               <input type="password" name="password" placeholder="password">
+               <input type="submit" value="login">
+           </form>
+           </section>
+           <%= @footer %>
+       </div>
+    </body>
+</html>
