@@ -14,7 +14,7 @@
             <% if @search_results.length > 0 %>
                 <% @search_results.each do |result| %>
                     <figure class="uk-width-2-10 anime-item">
-                        <a href=<%= "/show/#{result['id']}" %>>
+                        <a href=<%= "/show/ani-#{result['id']}" %>>
                         <img src=<%= "#{result['image_url_lge']}" %> 
                              width="300" height="300" class="anime-poster">
                         <figcaption>

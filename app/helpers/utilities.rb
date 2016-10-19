@@ -16,8 +16,12 @@ module Utilities
     JSON.parse("#{res.body}")
   end
   
-  def decodeString(str)
+  def decode_string(str)
     URI.decode(str)    
+  end
+  
+  def encode_string(str)
+    URI.encode(str)
   end
   
   def make_hummingbird_post_request(path, post_parameters)
@@ -43,6 +47,35 @@ module Utilities
     post_parameters = {'username' => user, 'password' => password}
     res = make_hummingbird_post_request(path, post_parameters)
     (res.code.to_i == 201) ? res.body : nil
+  end
+  
+  def get_hummingbird_anime_object(anilist_id)
+    url = "/anime/#{anilist_id}"
+    series_model = get_response_body(settings.anilist_communicator.make_get_request(url))
+    show_type = get_hummingbird_show_type_equivalent(series_model['type'])
+    anilist_english_title = series_model['title_english']
+    anilist_romaji_title = series_model['title_romaji']
+    res = get_hummingbird_response("/search/anime?query=#{encode_string(anilist_english_title)}")
+    
+    return nil if res.code.to_i != 200
+    anime_objects = get_response_body(res)
+    anime_objects.find do |item| 
+      item['title'].downcase == anilist_english_title.downcase || 
+      item['title'].downcase == anilist_romaji_title.downcase
+    end
+  end
+  
+  def get_hummingbird_show_type_equivalent(id)
+    hummingbird_show_types = {
+      0 => "TV",
+      1 => "TV",
+      2 => "Movie",
+      3 => "Special",
+      4 => "OVA",
+      5 => "ONA",
+      6 => "Music"
+    }
+    hummingbird_show_types[id]
   end
 end
 
