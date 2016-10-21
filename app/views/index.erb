@@ -7,8 +7,11 @@
     </head>
     <body>
         <div>
-            <input id="search-input" type="text" placeholder="Anime name"><br/>
-            <button id="search-btn" class="uk-btn uk-button-primary search">Search</button>
+            <span onclick="transportPartial(event)" data-endpoint="/api/anime-title-search-partial" data-target="search-wrapper">Search</span>
+            <span onclick="transportPartial(event)" data-endpoint="/api/anime-genre-search-form-partial" data-target="search-wrapper">Genre Search</span>
+        </div>
+        <div id="search-wrapper">
+            <%= @site_search_partial %>
         </div>
     </body>
 </html>
