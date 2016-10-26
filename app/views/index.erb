@@ -5,10 +5,10 @@
         <meta charset="utf-8">
         <script type="text/javascript" src="/js/site.js"></script>
     </head>
-    <body>
+    <body id="body">
         <div>
-            <span onclick="transportPartial(event)" data-endpoint="/api/anime-title-search-partial" data-target="search-wrapper">Search</span>
-            <span onclick="transportPartial(event)" data-endpoint="/api/anime-genre-search-form-partial" data-target="search-wrapper">Genre Search</span>
+            <span id="title-search-revealer" data-endpoint="/api/anime-title-search-partial" data-target="search-wrapper">Search</span>
+            <span id="genre-search-revealer" data-endpoint="/api/anime-genre-search-form-partial" data-target="search-wrapper">Genre Search</span>
         </div>
         <div id="search-wrapper">
             <%= @site_search_partial %>

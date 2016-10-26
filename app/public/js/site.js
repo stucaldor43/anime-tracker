@@ -35,3 +35,43 @@ function affixEvent(element, event_type, handler) {
     }
     element.addEventListener(event_type, handler);
 }
+
+var items = [{identifier: "title-search-revealer",ev: "click" , handler: transportPartial},
+{identifier: "genre-search-revealer", ev: "click", handler: transportPartial},
+{identifier: "body", ev: "click", handler: clickDelegationHandler}, {
+identifier: "body", ev: "keypress", handler: keypressDelegationHandler
+}];
+
+function addEventsToDomNodes(items) {
+    items.forEach(function(item) {
+        var element = document.getElementById(item.identifier);
+        if (element) {
+            affixEvent(element, item.ev, item.handler);
+        }
+    });
+}
+
+function clickDelegationHandler(e) {
+    var handlers = {
+        "search-btn": sendUserToSearchResultsPage.bind(e.target, e)
+    };
+    var handler = handlers[e.target.id];
+    
+    if (handler) {
+        handler();
+    }
+}
+
+function keypressDelegationHandler(e) {
+    var handlers = {
+        "search-input": sendUserToSearchResultsPage.bind(e.target, e)
+    };
+    var handler = handlers[e.target.id];
+    
+    if (handler) {
+        handler();
+    }
+}
+
+affixEvent(window, "load", addEventsToDomNodes.bind(null, items));
+
