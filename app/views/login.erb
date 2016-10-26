@@ -5,15 +5,52 @@
         <link rel="stylesheet" href="/css/uikit.css">
         <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
         <script type="text/javascript" src="/js/uikit.js"></script>
+        <style>
+            * {
+              box-sizing: border-box;
+            }
+            
+            section {
+              background-image: url("http://stuffpoint.com/log-horizon/image/407288-log-horizon-log-horizon.jpg");
+              background-size: cover;
+              text-align: center;
+              padding: 300px 0px;
+            }
+            
+            form {
+              display: inline-block;
+              position: relative;
+            }
+            
+            .uk-form legend:after {
+              border: 0 none transparent;
+            }
+            
+            input[type="submit"] {
+              padding: 10px 40px;
+            }
+            
+            button {
+              position: absolute;
+              left: 50%;
+              bottom: -60%;
+              transform: translate(-50%, -50%);
+              padding: 10px 0px;
+            }
+        </style>
     </head>
     <body id="body">
        <div class="uk-grid">    
            <%= @header %>
            <section class="uk-width-1-1">
-           <form method="post" action="/login">
-               <input type="text" name="username" placeholder="username">
-               <input type="password" name="password" placeholder="password">
-               <input type="submit" value="login">
+           <form class="uk-form" method="post" action="/login">
+               <fieldset>
+                   <legend>Sign In</legend>
+                   <div class="uk-form-row"><input type="text" class="uk-form-large" name="username" placeholder="username"></div>
+                   <div class="uk-form-row"><input type="password" class="uk-form-large" name="password" placeholder="password"></div>
+                   <div class="uk-form-row"><input type="submit" value="login"></div>
+                   <div class="uk-form-row"><button class="uk-button">Create Account</button></div>
+               </fieldset>
            </form>
            </section>
            <%= @footer %>
