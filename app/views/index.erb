@@ -3,15 +3,66 @@
     <head>
         <title>Anime Tracker</title>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="/css/uikit.css">
+        <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
+        <script type="text/javascript" src="/js/uikit.js"></script>
         <script type="text/javascript" src="/js/site.js"></script>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            ul.uk-tab {
+                margin: 0;
+                padding: 0;
+                display: inline-block;
+            }
+            .uk-tab li {
+                list-style: none;
+                display: inline-block;
+            }
+            .search-wrapper {
+                padding: 1em 1em;
+            }
+            .container {
+                width: 32%;
+                margin: 0 auto;
+                border: thin solid grey;
+                min-width: 195px;
+                max-width: 763px;
+            }
+            .title-search-wrapper {
+                text-align: center;
+            }
+            .large-bg {
+                background-image: url("https://s-media-cache-ak0.pinimg.com/originals/2f/2f/af/2f2faf04435a0cf2868016f768997add.jpg");
+                background-size: cover;
+                padding: 400px 0;
+            }
+        </style>
     </head>
     <body id="body">
-        <div>
-            <span id="title-search-revealer" data-endpoint="/api/anime-title-search-partial" data-target="search-wrapper">Search</span>
-            <span id="genre-search-revealer" data-endpoint="/api/anime-genre-search-form-partial" data-target="search-wrapper">Genre Search</span>
-        </div>
-        <div id="search-wrapper">
-            <%= @site_search_partial %>
-        </div>
+        <%= @header %>
+        <section>
+            <div class="large-bg">
+                <div class="container">
+                    <ul class="uk-tab" data-uk-tab>
+                        <li class="uk-active">
+                            <a id="title-search-revealer" 
+                            data-endpoint="/api/anime-title-search-partial" 
+                            data-target="search-wrapper">Search</a>
+                        </li>
+                        <li>
+                            <a id="genre-search-revealer" 
+                            data-endpoint="/api/anime-genre-search-form-partial" 
+                            data-target="search-wrapper">Genre Search</a>
+                        </li>
+                    </ul>
+                    <div id="search-wrapper" class="search-wrapper">
+                        <%= @site_search_partial %>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <%= @footer %>
     </body>
 </html>
