@@ -5,11 +5,72 @@
         <link rel="stylesheet" href="/css/uikit.css">
         <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
         <script type="text/javascript" src="/js/uikit.js"></script>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            .title-search-wrapper {
+                text-align: right;
+            }
+            .anime-cover-container img {
+                height: 300px;
+                width: 100%;
+            }
+            .grounder {
+                margin: 0 auto;
+                width: 60%;
+                max-width: 846px;
+            }
+        </style>
     </head>
     <body id="body">
        <div class="uk-grid">    
-           <%= @header %>
-           <%= @footer %>
+            <%= @header %>
+            <section class="uk-width-1-1">
+                <%= @title_search_partial %>
+            </section>
+            <section class="uk-width-1-1">
+                <div>
+                    <div class="grounder">
+                        <div class="uk-clearfix">
+                            <div class="anime-cover-container uk-float-left uk-width-medium-4-10">
+                                <img src="<%= @anime['cover_image'] %>" width="300" height="300">
+                            </div>
+                            <div class="uk-float-left anime-info-wrapper uk-width-medium-6-10">
+                                <h2 class="anime-title"><%= @anime['title'] %></h2>
+                                <div class="anime-star-rating">
+                                    <%= @anime['community_rating'].to_i %>
+                                    <i class="uk-icon-star"></i>
+                                </div>
+                                <div>
+                                    <span class="anime-type">
+                                        <%= @anime['show_type'] %>
+                                    </span>
+                                    <span class="age-rating">
+                                        <%= @anime['age_rating'] %>
+                                    </span>
+                                    <span class="show-status">
+                                        <%= @anime['status'] %>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span>
+                                        <%= "#{@anime['episode_count']} episodes" %>
+                                    </span>
+                                    <span>
+                                        <%= "#{@anime['episode_length']} minutes" %>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                           <p><%= @anime['synopsis'] %></p>
+                           <p><%= "Genres: " + @anime['genres'].map {|genre| genre['name']}.join(", ") %></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <%= @footer %>
        </div>
     </body>
 </html>
