@@ -27,18 +27,10 @@ module Utilities
   def make_hummingbird_post_request(path, post_parameters)
      uri = URI("http://hummingbird.me/api/v1#{path}")
      req = Net::HTTP::Post.new(uri)
-     req.set_form_data(post_parameters)
+     req.set_form_data(post_parameters) if post_parameters
      
      res = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|                                                         
        http.request(req)
-     end
-     
-     if res.code.to_i == 200
-        res
-     else
-        Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|                                                         
-         http.request(req)
-        end 
      end
   end
   
@@ -46,7 +38,7 @@ module Utilities
     path = "/users/authenticate"
     post_parameters = {'username' => user, 'password' => password}
     res = make_hummingbird_post_request(path, post_parameters)
-    (res.code.to_i == 201) ? res.body : nil
+    (res.code.to_i == 201) ? res.body.gsub(/"/, "") : nil
   end
   
   def get_hummingbird_anime_object(anilist_id)
@@ -76,6 +68,12 @@ module Utilities
       6 => "Music"
     }
     hummingbird_show_types[id]
+  end
+  
+  def show_is_in_user_library?(show_id)
+    library_entries = get_response_body(get_hummingbird_response("/users/#{session['username']}/library"))
+    sorted_library_entries = library_entries.sort {|x, y| x['anime']['id'] <=> y['anime']['id']}
+    sorted_library_entries.index {|entry| entry['anime']['id'] == show_id} ? true : false
   end
 end
 

@@ -1,10 +1,13 @@
 <html>
     <head>
-        <title>Login</title>
+        <title><%= @anime['title'] %></title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="/css/uikit.css">
+        <link rel="stylesheet" href="/css/components/notify.css">
         <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
         <script type="text/javascript" src="/js/uikit.js"></script>
+        <script type="text/javascript" src="/js/components/notify.js"></script>
+        <script type="text/javascript" src="/js/site.js"></script>
         <style>
             * {
                 box-sizing: border-box;
@@ -61,6 +64,17 @@
                                         <%= "#{@anime['episode_length']} minutes" %>
                                     </span>
                                 </div>
+                                <% if @authorized && !@show_is_in_library %>
+                                    <div>
+                                        <button id="addShow" class="uk-button uk-button-primary" data-show-id=<%= "#{@anime['id']}" %>><i class="uk-icon-plus"></i>Add to Library</button>
+                                        <button id="removeShow" class="uk-button uk-button-danger uk-hidden" data-show-id=<%= "#{@anime['id']}" %>><i class="uk-icon-remove"></i>Remove from Library</button>
+                                    </div>
+                                <% elsif @authorized && @show_is_in_library %>
+                                    <div>
+                                        <button id="addShow" class="uk-button uk-button-primary uk-hidden" data-show-id=<%= "#{@anime['id']}" %>><i class="uk-icon-plus"></i>Add to Library</button>
+                                        <button id="removeShow" class="uk-button uk-button-danger" data-show-id=<%= "#{@anime['id']}" %>><i class="uk-icon-remove"></i>Remove from Library</button>  
+                                    </div>
+                                <% end %>
                             </div>
                         </div>
                         <div>
