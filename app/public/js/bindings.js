@@ -29,7 +29,7 @@
         importPartial: function importPartial(url, swapElementSelector) {
             var swapElement = this.qs(swapElementSelector);
             this.makeGetRequest(url, function(response) {
-                swapElement.innerHTML = JSON.parse(response).contents;            
+                swapElement.innerHTML = response;            
             });
         }
     };
