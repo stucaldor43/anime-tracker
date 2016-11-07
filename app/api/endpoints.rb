@@ -12,14 +12,13 @@ end
 get '/api/search/anime/genres' do
   url = "/browse/anime?genres=#{ params['genre'].join(',')}&page=#{params['page']}"
   res = settings.anilist_communicator.make_get_request(url)
-  @search_results = get_response_body(res)
-  resource_contents = erb :genre_search_results_partial
   
-  if @search_results.length <= 0
+  if !(Net::HTTPSuccess === res)
     return 400
   end
   
-  JSON.generate({"status" => 200, "contents" => resource_contents})
+  @search_results = get_response_body(res)
+  Array === @search_results && @search_results.length >= 1 ? erb(:genre_search_results_partial) : 500
 end
 
 before '/api/library/*' do
