@@ -3,12 +3,25 @@ require 'net/http'
 
 get '/api/partials/anime-title-search-partial' do
   resource_contents = erb :anime_title_search_partial
-  JSON.generate({status => 200, "contents" => resource_contents})
+  JSON.generate({"status" => 200, "contents" => resource_contents})
 end
 
 get '/api/partials/anime-genre-search-form-partial' do
   resource_contents = erb :anime_genre_search_form_partial
-  JSON.generate({status => 200, "contents" => resource_contents}) 
+  JSON.generate({"status" => 200, "contents" => resource_contents}) 
+end
+
+get '/api/search/anime/genres' do
+  url = "/browse/anime?genres=#{ params['genre'].join(',')}&page=#{params['page']}"
+  res = settings.anilist_communicator.make_get_request(url)
+  @search_results = get_response_body(res)
+  resource_contents = erb :genre_search_results_partial
+  
+  if @search_results.length <= 0
+    return 400
+  end
+  
+  JSON.generate({"status" => 200, "contents" => resource_contents})
 end
 
 before '/api/library/*' do

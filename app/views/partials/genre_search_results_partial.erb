@@ -1,0 +1,14 @@
+<% @search_results.each do |result| %>
+    <figure class="uk-width-large-1-4 uk-width-small-1-3 anime-item">
+        <a href=<%= "/show/ani-#{result['id']}" %>>
+        <img src=<%= "#{result['image_url_lge']}" %> 
+             width="300" height="300" class="anime-poster">
+        <figcaption>
+            <h2 class="anime-title"><%= result['title_english'] %></h2>
+            <p class="anime-genres">
+                <%= result['genres'].join(', ') %>
+            </p>
+        </figcaption>
+        </a>
+    </figure>
+<% end %>
