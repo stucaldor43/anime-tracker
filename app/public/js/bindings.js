@@ -12,11 +12,8 @@
             element.addEventListener(event_type, handler);
         },
         makeGetRequest: function makeGetRequest(url, cb) {
-            var handler = function() {
-                cb(this.response);
-            };
             var request = new XMLHttpRequest();
-            this.affixEvent(request, "load", handler);
+            this.affixEvent(request, "load", cb);
             request.open("GET", url);
             request.send();    
         },
@@ -28,8 +25,10 @@
         },
         importPartial: function importPartial(url, swapElementSelector) {
             var swapElement = this.qs(swapElementSelector);
-            this.makeGetRequest(url, function(response) {
-                swapElement.innerHTML = response;            
+            this.makeGetRequest(url, function() {
+                if (this.status === 200) {
+                    swapElement.innerHTML = this.response;
+                }
             });
         }
     };
