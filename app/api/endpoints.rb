@@ -43,14 +43,15 @@ post '/api/library/:id/remove' do
   end
 end
 
-post '/api/library/:id' do
+get '/api/library/:id' do
   show_id = params['id'].to_i
-  if show_is_in_user_library?(show_id)
-    return 200
-  end
+  legal_statuses = ['currently-watching', 'plan-to-watch', 'completed', 'on-hold', 'dropped' ]
+  
+  return 400 if !legal_statuses.index(params['status']) 
+  
   request_parameters = {
     'auth_token' => session['auth_token'],
-    'status' => 'currently-watching'
+    'status' => params['status']
   }
   res = make_hummingbird_post_request("/libraries/#{show_id}", request_parameters)
   

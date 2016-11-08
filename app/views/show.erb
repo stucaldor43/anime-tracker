@@ -7,7 +7,8 @@
         <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
         <script type="text/javascript" src="/js/uikit.js"></script>
         <script type="text/javascript" src="/js/components/notify.js"></script>
-        <script type="text/javascript" src="/js/site.js"></script>
+        <script type="text/javascript" src="/js/bindings.js" defer></script>
+        <script type="text/javascript" src="/js/show.js" defer></script>
         <style>
             * {
                 box-sizing: border-box;
@@ -23,6 +24,9 @@
                 margin: 0 auto;
                 width: 60%;
                 max-width: 846px;
+            }
+            [data-uk-dropdown] {
+                position: relative;
             }
         </style>
     </head>
@@ -66,13 +70,35 @@
                                 </div>
                                 <% if @authorized && !@show_is_in_library %>
                                     <div>
-                                        <button id="addShow" class="uk-button uk-button-primary" data-show-id=<%= "#{@anime['id']}" %>><i class="uk-icon-plus"></i>Add to Library</button>
-                                        <button id="removeShow" class="uk-button uk-button-danger uk-hidden" data-show-id=<%= "#{@anime['id']}" %>><i class="uk-icon-remove"></i>Remove from Library</button>
+                                        <div data-uk-dropdown="{mode: 'click'}">
+                                            <button id="addShow" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>Add to Library</button>
+                                            <div class="uk-dropdown">
+                                                <ul class="status-list">
+                                                    <li><span class="currently_watching">Currently watching</a></li>
+                                                    <li><span class="plan_to_watch">Plan to watch</a></li>
+                                                    <li><span class="completed">Completed</a></li>
+                                                    <li><span class="on_hold">On hold</a></li>
+                                                    <li><span class="dropped">Dropped</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <button id="removeShow" class="uk-button uk-button-danger uk-hidden"><i class="uk-icon-remove"></i>Remove from Library</button>
                                     </div>
                                 <% elsif @authorized && @show_is_in_library %>
                                     <div>
-                                        <button id="addShow" class="uk-button uk-button-primary uk-hidden" data-show-id=<%= "#{@anime['id']}" %>><i class="uk-icon-plus"></i>Add to Library</button>
-                                        <button id="removeShow" class="uk-button uk-button-danger" data-show-id=<%= "#{@anime['id']}" %>><i class="uk-icon-remove"></i>Remove from Library</button>  
+                                        <div class="uk-hidden" data-uk-dropdown="{mode: 'click'}">
+                                            <button id="addShow" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>Add to Library</button>
+                                            <div class="uk-dropdown">
+                                                <ul class="status-list">
+                                                    <li><span class="currently_watching">Currently watching</a></li>
+                                                    <li><span class="plan_to_watch">Plan to watch</a></li>
+                                                    <li><span class="completed">Completed</a></li>
+                                                    <li><span class="on_hold">On hold</a></li>
+                                                    <li><span class="dropped">Dropped</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <button id="removeShow" class="uk-button uk-button-danger"><i class="uk-icon-remove"></i>Remove from Library</button>  
                                     </div>
                                 <% end %>
                             </div>
