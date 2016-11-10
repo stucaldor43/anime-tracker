@@ -63,3 +63,12 @@ get '/api/library/:id' do
   end
 end
 
+get '/api/feed' do
+  401 if !session['auth_token']
+  res = get_hummingbird_response("/users/#{session['username']}/feed")
+  JSON.generate({
+    "status": "success", 
+    "data": get_response_body(res)
+  })
+end
+
