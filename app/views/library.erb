@@ -10,6 +10,10 @@
             * {
                 box-sizing: border-box;
             }
+            .shelf-item {
+                display: inline-block;
+                vertical-align: top;
+            }
         </style>
     </head>
     <body id="body">
@@ -41,11 +45,44 @@
                        <p>You are now following <a :href="item.followed_user.url">{{ item.followed_user.name}}</a></p>
                    </div>
                 </div>
-           </div> 
+           </div>
+           <div id="library-manager">
+               <div>
+                   <input type="search" v-model.trim="searchTerm" @keyup="fetchLibrary">
+               </div>
+               <div class="shelf-wrapper" style="height: 500px; overflow: auto" @scroll="scrollHandler">
+                   <div class="shelf">
+                       <div class="uk-width-medium-1-2 uk-width-large-1-4 shelf-item" v-for="animeItem in revealedEntries">
+                           <library-entry :item="animeItem"></library-entry>
+                       </div>
+                   </div>
+               </div>
+           </div>
         </section>
         <%= @footer %>
-        <script type="text/javascript" src="/js/vue-2.0.5.js"></script>
-        <script type="text/javascript" src="/js/vue-resource-1.0.3.js"></script>
+        <template type="text/x-template" id="record">
+            <div>
+                <div class="top-card" :style="styleObject">
+                    <button @click="incrementEpisodesWatched"><i class="uk-icon-arrow-up"></i></button>
+                    <div>{{ ("" + item.anime.community_rating).substring(0, 3) }}</div>
+                </div>
+                <div class="bottom-card">
+                    <div class="uk-width-medium-6-10">
+                        <div>{{ item.anime.title }}</div>
+                        <div>{{ item.episodes_watched}} episodes viewed</div>
+                    </div>
+                    <div class="uk-width-medium-4-10">
+                        <div>
+                            <button @click="ratePositive"><i class="uk-icon-thumbs-up"></i></button>
+                            <button @click="rateNeutral"><i class="uk-icon-thumbs-up"></i></button>
+                            <button @click="rateNegative"><i class="uk-icon-thumbs-down"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <script type="text/javascript" src="/js/vue-1.0.26.js"></script>
+        <script type="text/javascript" src="/js/vue-resource-1.0.0.js"></script>
         <script type="text/javascript" src="/js/library.js" defer></script>
     </body>
 </html>

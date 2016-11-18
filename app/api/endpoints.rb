@@ -25,6 +25,70 @@ before '/api/library/*' do
   halt 401 unless session['auth_token']
 end
 
+post '/api/library/:id/positive-rating' do
+  show_id = params['id'].to_i
+  request_parameters = {
+    'auth_token' => session['auth_token'],
+    'sane_rating_update' => 5
+  }
+  res = make_hummingbird_post_request("/libraries/#{show_id}", request_parameters)
+  
+  case res
+  when Net::HTTPSuccess
+    200
+  else
+    500
+  end
+end
+
+post '/api/library/:id/neutral-rating' do
+  show_id = params['id'].to_i
+  request_parameters = {
+    'auth_token' => session['auth_token'],
+    'sane_rating_update' => 3
+  }
+  res = make_hummingbird_post_request("/libraries/#{show_id}", request_parameters)
+  
+  case res
+  when Net::HTTPSuccess
+    200
+  else
+    500
+  end
+end
+
+post '/api/library/:id/negative-rating' do
+  show_id = params['id'].to_i
+  request_parameters = {
+    'auth_token' => session['auth_token'],
+    'sane_rating_update' => 1
+  }
+  res = make_hummingbird_post_request("/libraries/#{show_id}", request_parameters)
+  
+  case res
+  when Net::HTTPSuccess
+    200
+  else
+    500
+  end
+end
+
+post '/api/library/:id/increment-episodes' do
+  show_id = params['id'].to_i
+  request_parameters = {
+    'auth_token' => session['auth_token'],
+    'increment_episodes' => true
+  }
+  res = make_hummingbird_post_request("/libraries/#{show_id}", request_parameters)
+  
+  case res
+  when Net::HTTPSuccess
+    200
+  else
+    500
+  end
+end
+
 post '/api/library/:id/remove' do
   show_id = params['id'].to_i
   if !show_is_in_user_library?(show_id)
@@ -41,6 +105,14 @@ post '/api/library/:id/remove' do
   else
     500
   end
+end
+
+get '/api/library/all' do
+  res = get_hummingbird_response("/users/#{session['username']}/library")
+  JSON.generate({
+    "status": "success", 
+    "data": get_response_body(res)
+  })
 end
 
 get '/api/library/:id' do
