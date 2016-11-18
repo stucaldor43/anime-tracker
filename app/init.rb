@@ -3,7 +3,9 @@ require 'sinatra'
 configure do
   set :root, File.dirname(__FILE__)
   set :views, ['views', 'views/partials']
-  enable :sessions
+  use Rack::Session::Cookie, :key => 'rack.session',
+                           :path => '/',
+                           :secret => 'Wz6TaGAYS2bnTqAdhXv3Ze67'
 end
 
 Dir.glob(['controllers/*.rb', 'api/*.rb']).each do |file|
