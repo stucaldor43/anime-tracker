@@ -52,7 +52,7 @@
                </div>
                <div class="shelf-wrapper" style="height: 500px; overflow: auto" @scroll="scrollHandler">
                    <div class="shelf">
-                       <div class="uk-width-medium-1-2 uk-width-large-1-4 shelf-item" v-for="animeItem in revealedEntries">
+                       <div class="uk-width-small-1-2 uk-width-large-1-4 shelf-item" v-for="animeItem in revealedEntries">
                            <library-entry :item="animeItem"></library-entry>
                        </div>
                    </div>
@@ -63,19 +63,30 @@
         <template type="text/x-template" id="record">
             <div>
                 <div class="top-card" :style="styleObject">
-                    <button @click="incrementEpisodesWatched"><i class="uk-icon-arrow-up"></i></button>
-                    <div>{{ ("" + item.anime.community_rating).substring(0, 3) }}</div>
+                    <button @click="incrementEpisodesWatched"><i class="uk-icon-arrow-up" title="increase episodes watched"></i></button>
+                    <div class="community-rating">{{ ("" + item.anime.community_rating).substring(0, 3) }}</div>
                 </div>
                 <div class="bottom-card">
                     <div class="uk-width-medium-6-10">
-                        <div>{{ item.anime.title }}</div>
-                        <div>{{ item.episodes_watched}} episodes viewed</div>
+                        <div class="status-tag">{{ item.status[0].toUpperCase() + item.status.slice(1).split("-").join(" ") }}</div>
+                        <div class="show-title">{{ item.anime.title }}</div>
+                        <div class="episodes-watched">{{ item.episodes_watched}} episodes viewed</div>
                     </div>
                     <div class="uk-width-medium-4-10">
                         <div>
-                            <button @click="ratePositive"><i class="uk-icon-thumbs-up"></i></button>
-                            <button @click="rateNeutral"><i class="uk-icon-thumbs-up"></i></button>
-                            <button @click="rateNegative"><i class="uk-icon-thumbs-down"></i></button>
+                            <button class="uk-button" @click="ratePositive"><i class="uk-icon-thumbs-up" title="like"></i></button>
+                            <button class="uk-button" @click="rateNeutral"><i class="uk-icon-thumbs-up" title="neutral"></i></button>
+                            <button class="uk-button" @click="rateNegative"><i class="uk-icon-thumbs-down" title="dislike"></i></button>
+                            <div style="position: relative" data-uk-dropdown="{mode: 'click'}">
+                                <button class="uk-button">Add To</button>
+                                <ul class="uk-dropdown entry-status" @click="hideDropdown">
+                                    <li class="status-item" @click="updateStatusToCurrentlyWatching">Currently watching</li>
+                                    <li class="status-item" @click="updateStatusToPlanToWatch">Plan to watch</li>
+                                    <li class="status-item" @click="updateStatusToCompleted">Completed</li>
+                                    <li class="status-item" @click="updateStatusToOnHold">On hold</li>
+                                    <li class="status-item" @click="updateStatusToDropped">Dropped</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

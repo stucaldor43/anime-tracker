@@ -71,25 +71,54 @@
        },
        methods: {
            incrementEpisodesWatched: function() {
-                var showId= this.item.anime.id;
-                this.$http.post("/api/library/" + showId + "/increment-episodes");    
+                var showId = this.item.anime.id;
+                this.item.episodes_watched += 1;
+                var incrementEpisodesWatched = this.$http.post("/api/library/" + showId + "/increment-episodes");
+                incrementEpisodesWatched.then(function(response) {
+                    if (response.status !== 200) {
+                        this.item.episodes_watched -= 1;
+                    }
+                });
            },
            ratePositive: function() {
-                var showId= this.item.anime.id;
+                var showId = this.item.anime.id;
                 this.$http.post("/api/library/" + showId + "/positive-rating"); 
            },
            rateNeutral: function() {
-                var showId= this.item.anime.id;
+                var showId = this.item.anime.id;
                 this.$http.post("/api/library/" + showId + "/neutral-rating");  
            },
            rateNegative: function() {
-                var showId= this.item.anime.id;
+                var showId = this.item.anime.id;
                 this.$http.post("/api/library/" + showId + "/negative-rating");   
+           },
+           updateStatusToCurrentlyWatching: function() {
+                var showId = this.item.anime.id;
+                this.$http.get("/api/library/" + showId + "?status=currently-watching");
+           },
+           updateStatusToPlanToWatch: function() {
+                var showId = this.item.anime.id;
+                this.$http.get("/api/library/" + showId + "?status=plan-to-watch");
+           },
+           updateStatusToCompleted: function() {
+                var showId = this.item.anime.id;
+                this.$http.get("/api/library/" + showId + "?status=completed");
+           },
+           updateStatusToOnHold: function() {
+                var showId = this.item.anime.id;
+                this.$http.get("/api/library/" + showId + "?status=on-hold");
+           },
+           updateStatusToDropped: function() {
+                var showId = this.item.anime.id;
+                this.$http.get("/api/library/" + showId + "?status=dropped");
+           },
+           hideDropdown: function(e) {
+               e.target.parentNode.style.display = "none";
            }
        }
     });
     
-    var maxEntriesPerRequest = 6;
+    var maxEntriesPerRequest = 8;
     var library = new Vue({
         el: "#library-manager",
         data: {
