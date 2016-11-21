@@ -19,45 +19,51 @@
     <body id="body">
         <%= @header %>
         <section>
-           <div id="activity-feed">
-               <div v-for="item in feed">
-                   <div v-show="item.substory_type === 'watchlist_status_update'">
-                       <p v-show="item.new_status === 'currently-watching'">
-                           You are currently watching <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
-                       </p>
-                       <p v-show="item.new_status === 'plan-to-watch'">
-                           You plan to watch <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
-                       </p>
-                       <p v-show="item.new_status === 'completed'">
-                           You have finished every episode of <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
-                       </p>
-                       <p v-show="item.new_status === 'on-hold'">
-                           You have put watching <a :href="'/show/' + item.media.id">{{ item.media.title }}</a> on hold
-                       </p>
-                       <p v-show="item.new_status === 'dropped'">
-                           You have dropped <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
-                       </p>
+           <ul class="uk-tab" data-uk-tab="{connect: '#tab-contents', animation: 'slide-horizontal'}">
+               <li class="uk-active"><a href="">Library</a></li>
+               <li><a href="">Activity Feed</a></li>
+           </ul>
+           <ul id="tab-contents" class="uk-switcher">
+               <li id="library-manager">
+                   <div>
+                       <input type="search" v-model.trim="searchTerm" @keyup="fetchLibrary">
                    </div>
-                   <div v-show="item.substory_type === 'watched_episode'">
-                       <p>You watched episode {{ item.episode_number }} of <a :href="'/show/' + item.media.id">{{ item.media.title}}</a></p>
-                   </div>
-                   <div v-show="item.substory_type === 'followed'">
-                       <p>You are now following <a :href="item.followed_user.url">{{ item.followed_user.name}}</a></p>
-                   </div>
-                </div>
-           </div>
-           <div id="library-manager">
-               <div>
-                   <input type="search" v-model.trim="searchTerm" @keyup="fetchLibrary">
-               </div>
-               <div class="shelf-wrapper" style="height: 500px; overflow: auto" @scroll="scrollHandler">
-                   <div class="shelf">
-                       <div class="uk-width-small-1-2 uk-width-large-1-4 shelf-item" v-for="animeItem in revealedEntries">
-                           <library-entry :item="animeItem"></library-entry>
+                   <div class="shelf-wrapper" style="height: 500px; overflow: auto" @scroll="scrollHandler">
+                       <div class="shelf">
+                           <div class="uk-width-small-1-2 uk-width-large-1-4 shelf-item" v-for="animeItem in revealedEntries">
+                               <library-entry :item="animeItem"></library-entry>
+                           </div>
                        </div>
                    </div>
-               </div>
-           </div>
+               </li>
+               <li id="activity-feed">
+                   <div v-for="item in feed">
+                       <div v-show="item.substory_type === 'watchlist_status_update'">
+                           <p v-show="item.new_status === 'currently-watching'">
+                               You are currently watching <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                           </p>
+                           <p v-show="item.new_status === 'plan-to-watch'">
+                               You plan to watch <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                           </p>
+                           <p v-show="item.new_status === 'completed'">
+                               You have finished every episode of <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                           </p>
+                           <p v-show="item.new_status === 'on-hold'">
+                               You have put watching <a :href="'/show/' + item.media.id">{{ item.media.title }}</a> on hold
+                           </p>
+                           <p v-show="item.new_status === 'dropped'">
+                               You have dropped <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                           </p>
+                       </div>
+                       <div v-show="item.substory_type === 'watched_episode'">
+                           <p>You watched episode {{ item.episode_number }} of <a :href="'/show/' + item.media.id">{{ item.media.title}}</a></p>
+                       </div>
+                       <div v-show="item.substory_type === 'followed'">
+                           <p>You are now following <a :href="item.followed_user.url">{{ item.followed_user.name}}</a></p>
+                       </div>
+                    </div>
+               </li>
+            </ul>
         </section>
         <%= @footer %>
         <template type="text/x-template" id="record">
