@@ -92,65 +92,24 @@
                 var showId = this.item.anime.id;
                 this.$http.post("/api/library/" + showId + "/negative-rating");   
            },
-           updateStatusToCurrentlyWatching: function() {
-                var initialStatus = this.item.status;
-                this.item.status = "currently-watching";
-                var showId = this.item.anime.id;
-                var updateStatus = this.$http.get("/api/library/" + showId + "?status=currently-watching");
-                updateStatus.then(function(response) {
+           updateStatus: function(newStatus) {
+               var initialStatus = this.item.status;
+               this.item.status = newStatus;
+               var showId = this.item.anime.id;
+               var updateStatus = this.$http.get("/api/library/" + showId + "?status=" + newStatus);
+               updateStatus.then(function(response) {
                     if (response.status !== 200) {
                         this.item.status = initialStatus;
-                    }
-                    return this.item.status;
-                });
-           },
-           updateStatusToPlanToWatch: function() {
-                var initialStatus = this.item.status;
-                this.item.status = "plan-to-watch";
-                var showId = this.item.anime.id;
-                var updateStatus = this.$http.get("/api/library/" + showId + "?status=plan-to-watch");
-                updateStatus.then(function(response) {
-                    if (response.status !== 200) {
-                        this.item.status = initialStatus;
-                    }   
-                    return this.item.status;
-                });
-           },
-           updateStatusToCompleted: function() {
-                var initialStatus = this.item.status;
-                this.item.status = "completed";
-                var showId = this.item.anime.id;
-                var updateStatus = this.$http.get("/api/library/" + showId + "?status=completed");
-                updateStatus.then(function(response) {
-                    if (response.status !== 200) {
-                        this.item.status = initialStatus;
+                        UIkit.notify({
+                           message: "<i class='uk-icon-close'></i>Failed to update the status of " + 
+                                    this.item.anime.title + " to " + (newStatus.split("-").join(" ")), 
+                           status: "info",
+                           timeout: 5000,
+                           pos: "bottom-center"
+                        });
                     }  
                     return this.item.status;
-                });
-           },
-           updateStatusToOnHold: function() {
-                var initialStatus = this.item.status;
-                this.item.status = "on-hold";
-                var showId = this.item.anime.id;
-                var updateStatus = this.$http.get("/api/library/" + showId + "?status=on-hold");
-                updateStatus.then(function(response) {
-                    if (response.status !== 200) {
-                        this.item.status = initialStatus;
-                    }   
-                    return this.item.status;
-                });
-           },
-           updateStatusToDropped: function() {
-                var initialStatus = this.item.status;
-                this.item.status = "dropped";
-                var showId = this.item.anime.id;
-                var updateStatus = this.$http.get("/api/library/" + showId + "?status=dropped");
-                updateStatus.then(function(response) {
-                    if (response.status !== 200) {
-                        this.item.status = initialStatus;
-                    }  
-                    return this.item.status;
-                });
+               });
            },
            hideDropdown: function(e) {
                e.target.parentNode.style.display = "none";

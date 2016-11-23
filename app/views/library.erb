@@ -4,8 +4,10 @@
         <title>Library</title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="/css/uikit.css">
-        <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
+        <link rel="stylesheet" href="/css/components/notify.css">
+	    <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
         <script type="text/javascript" src="/js/uikit.js"></script>
+        <script type="text/javascript" src="/js/components/notify.js"></script>
         <style>
             * {
                 box-sizing: border-box;
@@ -86,11 +88,11 @@
                             <div style="position: relative" data-uk-dropdown="{mode: 'click'}">
                                 <button class="uk-button">Add To</button>
                                 <ul class="uk-dropdown entry-status" @click="hideDropdown">
-                                    <li class="status-item" @click="updateStatusToCurrentlyWatching">Currently watching</li>
-                                    <li class="status-item" @click="updateStatusToPlanToWatch">Plan to watch</li>
-                                    <li class="status-item" @click="updateStatusToCompleted">Completed</li>
-                                    <li class="status-item" @click="updateStatusToOnHold">On hold</li>
-                                    <li class="status-item" @click="updateStatusToDropped">Dropped</li>
+                                    <li class="status-item" @click="updateStatus('currently-watching')">Currently watching</li>
+                                    <li class="status-item" @click="updateStatus('plan-to-watch')">Plan to watch</li>
+                                    <li class="status-item" @click="updateStatus('completed')">Completed</li>
+                                    <li class="status-item" @click="updateStatus('on-hold')">On hold</li>
+                                    <li class="status-item" @click="updateStatus('dropped')">Dropped</li>
                                 </ul>
                             </div>
                         </div>
