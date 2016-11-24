@@ -42,26 +42,26 @@
                    <div v-for="item in feed">
                        <div v-show="item.substory_type === 'watchlist_status_update'">
                            <p v-show="item.new_status === 'currently-watching'">
-                               You are currently watching <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                               {{ username }} is currently watching <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
                            </p>
                            <p v-show="item.new_status === 'plan-to-watch'">
-                               You plan to watch <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                               {{ username }} plans to watch <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
                            </p>
                            <p v-show="item.new_status === 'completed'">
-                               You have finished every episode of <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                               {{ username }} completed <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
                            </p>
                            <p v-show="item.new_status === 'on-hold'">
-                               You have put watching <a :href="'/show/' + item.media.id">{{ item.media.title }}</a> on hold
+                               {{ username }} has put <a :href="'/show/' + item.media.id">{{ item.media.title }}</a> on hold
                            </p>
                            <p v-show="item.new_status === 'dropped'">
-                               You have dropped <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                               {{ username }} has dropped <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
                            </p>
                        </div>
                        <div v-show="item.substory_type === 'watched_episode'">
-                           <p>You watched episode {{ item.episode_number }} of <a :href="'/show/' + item.media.id">{{ item.media.title}}</a></p>
+                           <p>{{ username }} watched episode {{ item.episode_number }} of <a :href="'/show/' + item.media.id">{{ item.media.title}}</a></p>
                        </div>
                        <div v-show="item.substory_type === 'followed'">
-                           <p>You are now following <a :href="item.followed_user.url">{{ item.followed_user.name}}</a></p>
+                           <p>{{ username }} is now following <a :href="item.followed_user.url">{{ item.followed_user.name}}</a></p>
                        </div>
                     </div>
                </li>

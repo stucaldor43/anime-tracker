@@ -24,6 +24,7 @@
         el: "#activity-feed",
         data: {
             feed: [],
+            username: window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1)
         },
         methods: {
             // start: function() {
