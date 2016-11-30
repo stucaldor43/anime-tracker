@@ -33,7 +33,7 @@
                    <div class="shelf-wrapper" style="height: 500px; overflow: auto" @scroll="scrollHandler">
                        <div class="shelf">
                            <div class="uk-width-small-1-2 uk-width-large-1-4 shelf-item" v-for="animeItem in revealedEntries">
-                               <library-entry :item="animeItem"></library-entry>
+                               <library-entry :item="animeItem" :can-modify-library="isViewingOwnPage" ></library-entry>
                            </div>
                        </div>
                    </div>
@@ -61,7 +61,7 @@
                            <p>{{ username }} watched episode {{ item.episode_number }} of <a :href="'/show/' + item.media.id">{{ item.media.title}}</a></p>
                        </div>
                        <div v-show="item.substory_type === 'followed'">
-                           <p>{{ username }} is now following <a :href="item.followed_user.url">{{ item.followed_user.name}}</a></p>
+                           <p>{{ username }} is now following <a :href="'/library/user/' + item.followed_user.name">{{ item.followed_user.name}}</a></p>
                        </div>
                     </div>
                </li>
@@ -70,11 +70,14 @@
         <%= @footer %>
         <template type="text/x-template" id="record">
             <div>
-                <div class="top-card" :style="styleObject">
+                <div class="top-card" :style="styleObject" v-if="canModifyLibrary">
                     <button @click="incrementEpisodesWatched"><i class="uk-icon-arrow-up" title="increase episodes watched"></i></button>
                     <div class="community-rating">{{ ("" + item.anime.community_rating).substring(0, 3) }}</div>
                 </div>
-                <div class="bottom-card">
+                <div class="top-card" :style="styleObject" v-else>
+                    <div class="community-rating">{{ ("" + item.anime.community_rating).substring(0, 3) }}</div>
+                </div>
+                <div class="bottom-card" v-if="canModifyLibrary">
                     <div class="uk-width-medium-6-10">
                         <div class="status-tag">{{ item.status[0].toUpperCase() + item.status.slice(1).split("-").join(" ") }}</div>
                         <div class="show-title">{{ item.anime.title }}</div>
@@ -98,6 +101,13 @@
                         </div>
                     </div>
                 </div>
+                <div class="bottom-card" v-else>
+                    <div class="uk-width-medium-6-10">
+                        <div class="status-tag">{{ item.status[0].toUpperCase() + item.status.slice(1).split("-").join(" ") }}</div>
+                        <div class="show-title">{{ item.anime.title }}</div>
+                        <div class="episodes-watched">{{ item.episodes_watched}} episodes viewed</div>
+                    </div>
+               </div>
             </div>
         </template>
         <script type="text/javascript" src="/js/vue-1.0.26.js"></script>

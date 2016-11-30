@@ -29,7 +29,7 @@
         methods: {
             // start: function() {
             //     setInterval(function() {
-            //         this.$http.get("/api/feed").then(function addNewSubstoriesToFeed(response) {
+            //         this.$http.get("/api/feed/" + this.username).then(function addNewSubstoriesToFeed(response) {
             //             var substories = JSON.parse(response.data).data;
             //             var lastFeedItem = this.feed[this.feed.length - 1];
             //             var lastFeedItemTime = new Date(lastFeedItem.created_at).getTime();
@@ -45,7 +45,7 @@
             // }
         },
         created: function() {
-            Vue.http.get("/api/feed").then(function provideInitialSubstoriesToFeed(response) {
+            Vue.http.get("/api/feed/" + this.username).then(function provideInitialSubstoriesToFeed(response) {
                 var substories = JSON.parse(response.data).data;
                 var allSubstories = substories
                     .reduce(getCollectionOfSubstoriesMergedWithAnimeObjects, [])
@@ -59,7 +59,7 @@
     
     Vue.component("library-entry", {
        template: "#record",
-       props: ["item"],
+       props: ["item", "canModifyLibrary"],
        data: function() {
          return {
              styleObject: {
@@ -124,11 +124,13 @@
         data: {
             searchTerm: "",
             libraryEntries: [],
-            revealedEntries: []
+            revealedEntries: [],
+            username: window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1),
+            isViewingOwnPage: false
         },
         methods: {
             fetchLibrary: function(e) {
-                var promise = this.$http.get("/api/library/all");
+                var promise = this.$http.get("/api/user/" + this.username + "/library");
                 promise.then(function(response) {
                     return JSON.parse(response.body).data;
                 }).then(function(entries) {
@@ -171,10 +173,18 @@
                 var endIndex = (startIndex + maxEntriesPerRequest <= allEntries.length) ? startIndex + maxEntriesPerRequest : allEntries.length;
                 var newlyRevealedEntries = this.libraryEntries.slice(startIndex, endIndex);
                 this.revealedEntries.push.apply(this.revealedEntries, newlyRevealedEntries);
+            },
+            setIsViewingOwnPage: function() {
+                var username = window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1);
+                var promise = this.$http.get("/api/authorized/" + username);
+                promise.then(function(response) {
+                    this.isViewingOwnPage = (response.status === 200) ? true : false;
+                    return this.isViewingOwnPage;
+                });
             }
         },
         created: function() {
-            var promise = this.$http.get("/api/library/all");
+            var promise = this.$http.get("/api/user/" + this.username + "/library");
             promise.then(function(response) {
                 var allLibraryEntries = JSON.parse(response.body).data;
                 this.libraryEntries.push.apply(this.libraryEntries, allLibraryEntries);
@@ -189,6 +199,7 @@
                 this.revealedEntries.push.apply(this.revealedEntries, initialEntries);
                 return initialEntries;
             }.bind(this));
+            this.setIsViewingOwnPage();
         }
     });
 })();

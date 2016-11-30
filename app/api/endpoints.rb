@@ -9,6 +9,10 @@ get '/api/partials/anime-genre-search-form-partial' do
   erb :anime_genre_search_form_partial
 end
 
+get '/api/authorized/:name' do
+  params['name'] == session['username'] ? 200 : 401
+end
+
 get '/api/search/anime/genres' do
   url = "/browse/anime?genres=#{ params['genre'].join(',')}&page=#{params['page']}"
   res = settings.anilist_communicator.make_get_request(url)
@@ -19,6 +23,14 @@ get '/api/search/anime/genres' do
   
   @search_results = get_response_body(res)
   Array === @search_results && @search_results.length >= 1 ? erb(:genre_search_results_partial) : 500
+end
+
+get '/api/user/:username/library' do
+  res = get_hummingbird_response("/users/#{params['username']}/library")
+  JSON.generate({
+    "status": "success", 
+    "data": get_response_body(res)
+  })
 end
 
 before '/api/library/*' do
@@ -107,14 +119,6 @@ post '/api/library/:id/remove' do
   end
 end
 
-get '/api/library/all' do
-  res = get_hummingbird_response("/users/#{session['username']}/library")
-  JSON.generate({
-    "status": "success", 
-    "data": get_response_body(res)
-  })
-end
-
 get '/api/library/:id' do
   show_id = params['id'].to_i
   legal_statuses = ['currently-watching', 'plan-to-watch', 'completed', 'on-hold', 'dropped' ]
@@ -135,9 +139,8 @@ get '/api/library/:id' do
   end
 end
 
-get '/api/feed' do
-  401 if !session['auth_token']
-  res = get_hummingbird_response("/users/#{session['username']}/feed")
+get '/api/feed/:username' do
+  res = get_hummingbird_response("/users/#{params['username']}/feed")
   JSON.generate({
     "status": "success", 
     "data": get_response_body(res)
