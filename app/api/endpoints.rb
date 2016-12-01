@@ -26,7 +26,14 @@ get '/api/search/anime/genres' do
 end
 
 get '/api/user/:username/library' do
-  res = get_hummingbird_response("/users/#{params['username']}/library")
+  legal_statuses = ['currently-watching', 'plan-to-watch', 'completed', 'on-hold', 'dropped' ]
+  if !params['status'].nil? && !legal_statuses.index(params['status'])
+    return JSON.generate({
+      "status": "fail", 
+      "data": [{status: "#{params['status']} is not a legal parameter value"}]
+    })
+  end
+  res = get_hummingbird_response("/users/#{params['username']}/library?status=#{params['status']}")
   JSON.generate({
     "status": "success", 
     "data": get_response_body(res)

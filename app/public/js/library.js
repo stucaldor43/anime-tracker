@@ -130,10 +130,12 @@
         },
         methods: {
             fetchLibrary: function(e) {
-                var promise = this.$http.get("/api/user/" + this.username + "/library");
-                promise.then(function(response) {
+                this.libraryEntries = [];
+                this.revealedEntries = [];
+                var getResponse = function(response) {
                     return JSON.parse(response.body).data;
-                }).then(function(entries) {
+                };
+                var filterEntries = function(entries) {
                     return entries.filter(function(item) {
                         var term = this.searchTerm;
                         
@@ -142,19 +144,29 @@
                         }
                         return true;
                     }.bind(this));
-                }.bind(this))
-                .then(function(filteredResults) {
-                    this.libraryEntries = filteredResults;
+                }.bind(this);
+                var setLibraryEntries = function(filteredResults) {
+                    this.libraryEntries.push.apply(this.libraryEntries, filteredResults);
                     return filteredResults;
-                }.bind(this))
-                .then(function(entries) {
-                    if (entries.length < maxEntriesPerRequest) {
-                        this.revealedEntries = entries;
-                        return entries;
+                }.bind(this);
+                var setRevealedEntries = function(entries) {
+                    if (this.revealedEntries.length >= maxEntriesPerRequest) {
+                        return;
                     }
-                    var initialEntries = entries.slice(0, maxEntriesPerRequest);
-                    this.revealedEntries = initialEntries;
-                    return initialEntries;
+                    
+                    if ((maxEntriesPerRequest - this.revealedEntries.length) <= entries.length) {
+                        this.revealedEntries.push.apply(this.revealedEntries, entries.slice(0, maxEntriesPerRequest - this.revealedEntries.length)); 
+                    }
+                    else {
+                        this.revealedEntries.push.apply(this.revealedEntries, entries); 
+                    }
+                }.bind(this);
+                
+                var endpoint = "/api/user/" + this.username + "/library";
+                var libraryEntryStatus = ["currently-watching", "plan-to-watch", "completed", "on-hold", "dropped"];
+                libraryEntryStatus.forEach(function(status) {
+                    var promise = this.$http.get(endpoint + "?status=" + status);
+                    promise.then(getResponse).then(filterEntries).then(setLibraryEntries).then(setRevealedEntries);    
                 }.bind(this));
             },
             scrollHandler: function() {
@@ -184,20 +196,28 @@
             }
         },
         created: function() {
-            var promise = this.$http.get("/api/user/" + this.username + "/library");
-            promise.then(function(response) {
+            var addNextNEntries = function(response) {
                 var allLibraryEntries = JSON.parse(response.body).data;
                 this.libraryEntries.push.apply(this.libraryEntries, allLibraryEntries);
                 return allLibraryEntries;
-            }.bind(this))
-            .then(function(entries) {
-                if (entries.length < maxEntriesPerRequest) {
-                    this.revealedEntries.push.apply(this.revealedEntries, entries);
-                    return entries;
+            }.bind(this);
+            var addToRevealedEntries = function(entries) {
+                if (this.revealedEntries.length >= maxEntriesPerRequest) {
+                    return;
                 }
-                var initialEntries = entries.slice(0, maxEntriesPerRequest);
-                this.revealedEntries.push.apply(this.revealedEntries, initialEntries);
-                return initialEntries;
+                
+                if ((maxEntriesPerRequest - this.revealedEntries.length) <= entries.length) {
+                    this.revealedEntries.push.apply(this.revealedEntries, entries.slice(0, maxEntriesPerRequest - this.revealedEntries.length)); 
+                }
+                else {
+                    this.revealedEntries.push.apply(this.revealedEntries, entries); 
+                }
+            }.bind(this);
+            var endpoint = "/api/user/" + this.username + "/library";
+            var libraryEntryStatus = ["currently-watching", "plan-to-watch", "completed", "on-hold", "dropped"];
+            libraryEntryStatus.forEach(function(status) {
+                var promise = this.$http.get(endpoint + "?status=" + status);
+                promise.then(addNextNEntries).then(addToRevealedEntries);    
             }.bind(this));
             this.setIsViewingOwnPage();
         }

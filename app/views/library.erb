@@ -28,7 +28,7 @@
            <ul id="tab-contents" class="uk-switcher">
                <li id="library-manager">
                    <div>
-                       <input type="search" v-model.trim="searchTerm" @keyup="fetchLibrary">
+                       <input type="search" v-model.trim="searchTerm" @keyup.enter="fetchLibrary">
                    </div>
                    <div class="shelf-wrapper" style="height: 500px; overflow: auto" @scroll="scrollHandler">
                        <div class="shelf">
