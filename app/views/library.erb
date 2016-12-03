@@ -16,6 +16,23 @@
                 display: inline-block;
                 vertical-align: top;
             }
+            
+            .shelf img {
+                min-width: 25%;
+                min-height: 200px;
+                display: inline-block;
+            }
+            
+            img:not([src]) {
+                visibility: hidden;
+            }
+            
+            /* Fixes Firefox anomaly */
+            @-moz-document url-prefix() {
+                img:-moz-loading {
+                    visibility: hidden;
+                }
+            }
         </style>
     </head>
     <body id="body">
@@ -70,11 +87,13 @@
         <%= @footer %>
         <template type="text/x-template" id="record">
             <div>
-                <div class="top-card" :style="styleObject" v-if="canModifyLibrary">
+                <div class="top-card" v-if="canModifyLibrary">
+                    <img :src="item.anime.cover_image" :data-original="item.anime.cover_image" width="470" height="710" />
                     <button @click="incrementEpisodesWatched"><i class="uk-icon-arrow-up" title="increase episodes watched"></i></button>
                     <div class="community-rating">{{ ("" + item.anime.community_rating).substring(0, 3) }}</div>
                 </div>
-                <div class="top-card" :style="styleObject" v-else>
+                <div class="top-card" v-else>
+                    <img :src="item.anime.cover_image" :data-original="item.anime.cover_image" width="470" height="710" />
                     <div class="community-rating">{{ ("" + item.anime.community_rating).substring(0, 3) }}</div>
                 </div>
                 <div class="bottom-card" v-if="canModifyLibrary">
@@ -112,6 +131,7 @@
         </template>
         <script type="text/javascript" src="/js/vue-1.0.26.js"></script>
         <script type="text/javascript" src="/js/vue-resource-1.0.0.js"></script>
+        <script type="text/javascript" src="/js/lazyload.min.js"></script>
         <script type="text/javascript" src="/js/library.js" defer></script>
     </body>
 </html>

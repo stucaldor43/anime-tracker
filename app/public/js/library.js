@@ -61,14 +61,7 @@
        template: "#record",
        props: ["item", "canModifyLibrary"],
        data: function() {
-         return {
-             styleObject: {
-                 backgroundImage: "url" + "(" + this.item.anime.cover_image + ")",
-                 backgroundSize: "100% 100%",
-                 backgroundRepeat: "no-repeat",
-                 paddingTop: "67%"
-             }
-         };
+         return {};
        },
        methods: {
            incrementEpisodesWatched: function() {
@@ -222,4 +215,6 @@
             this.setIsViewingOwnPage();
         }
     });
+    
+    var myLazyLoad = new LazyLoad();
 })();
