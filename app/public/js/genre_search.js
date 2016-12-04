@@ -5,7 +5,7 @@
     var pageNumber = 2;
     
     affixEvent(qs(".result-wrapper"), "scroll", function() {
-        if(this.scrollHeight - this.scrollTop === this.clientHeight) {
+        if(this.scrollHeight - this.scrollTop <= this.clientHeight * 3) {
             makeGetRequest.call(helpers, "/api/search/anime/genres" + window.location.search + 
             "&page=" + pageNumber, function() {
                 if (this.status === 200) {
