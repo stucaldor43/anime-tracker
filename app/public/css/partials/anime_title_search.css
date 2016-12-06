@@ -1,0 +1,14 @@
+.title-search-wrapper li {
+    list-style: none;
+    display: inline;
+}
+
+.search-input {
+    padding: 1em;
+    margin-bottom: 1.6em;
+}
+
+.search {
+    padding: 1em;
+}
+            
