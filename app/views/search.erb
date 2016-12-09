@@ -4,6 +4,7 @@
         <title>Search</title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="/css/uikit.css">
+        <link rel="stylesheet" href="/css/partials/anime_title_search.css">
         <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
         <script type="text/javascript" src="/js/uikit.js"></script>
         <script type="text/javascript" src="/js/bindings.js" defer></script>
@@ -11,45 +12,111 @@
             * {
                 box-sizing: border-box;
             }
+            
+            body > .uk-container {
+                padding: 0;    
+            }
+            
+            .uk-grid {
+                margin-left: 0;
+            }
+            
+            .uk-grid > * {
+                padding-left: 0;    
+            }
+            
+            .anime-item {
+                margin-bottom: 12px;
+                text-align: center;
+            }
+            
             .anime-item .anime-poster {
                 height: 250px;
             }
+            
+            .anime-title {
+                font-size: 1em;
+                font-family: sans-serif;
+                margin-top: 12px;
+                font-weight: 700;
+            }
+            
+            .anime-genres {
+                color: grey;
+            }
+            
             .title-search-wrapper {
                 text-align: right;
             }
+            
+            section.uk-grid {
+                padding-top: 20px;
+                background-color: #F4F4F4;    
+            }
+            
+            form {
+                background-color: #FFF;
+            }
+            
+            aside ul {
+                margin: 0;
+                padding: 0;
+            }
+            
+            aside li {
+                list-style: none;
+            }
+            
+            @media (min-width: 768px) {
+                section .wrapper {
+                    display: inline-block;
+                }
+                
+                aside {
+                    width: 30%;
+                    display: inline-block;
+                    margin-left: -4px;
+                    vertical-align: top;
+                }
+            }
+            
         </style>
     </head>
     <body id="body">
-        <div class="uk-grid">
+        <div class="uk-container uk-container-center">
             <%= @header %>
             <section class="uk-width-1-1">
                 <%= @title_search_partial %>
             </section>
             <section class="uk-grid uk-width-1-1">
-            <aside>
-                <%= @genre_search_form_partial %>
-            </aside>
-            <% if @search_results.length > 0 %>
-                <div class="result-wrapper uk-grid uk-width-small-7-10">
-                <% @search_results.each do |result| %>
-                    <figure class="uk-width-large-1-4 uk-width-small-1-3 anime-item">
-                        <a href=<%= "/show/#{result['id']}" %>>
-                        <img src=<%= "#{result['cover_image']}" %> 
-                             width="300" height="300" class="anime-poster">
-                        <figcaption>
-                            <h2 class="anime-title"><%= result['title'] %></h2>
-                            <p class="anime-genres">
-                                <%= result['genres'].map {|genre| genre['name']}.
-                                    join(', ') %>
-                            </p>
-                        </figcaption>
-                        </a>
-                    </figure>
-                <% end %>
+                <div class="uk-width-medium-4-5 uk-container-center">
+                    <% if @search_results.length > 0 %>
+                        <div class="wrapper uk-width-medium-7-10">
+                            <div class="result-wrapper uk-grid">
+                            <% @search_results.each do |result| %>
+                                <figure class="uk-width-small-1-2 anime-item">
+                                    <a href=<%= "/show/#{result['id']}" %>>
+                                    <img src=<%= "#{result['cover_image']}" %> 
+                                         width="300" height="300" class="anime-poster">
+                                    <figcaption>
+                                        <h2 class="anime-title"><%= result['title'] %></h2>
+                                        <p class="anime-genres">
+                                            <%= result['genres'].map {|genre| genre['name']}.
+                                                join(', ') %>
+                                        </p>
+                                    </figcaption>
+                                    </a>
+                                </figure>
+                            <% end %>
+                            </div>
+                        </div>
+                    <% else %>
+                        <h2>Sorry, 0 results were found</h2>
+                    <% end %>
+                    <aside>
+                        <%= @genre_search_form_partial %>
+                    </aside>
                 </div>
-            <% else %>
-                <h2>Sorry, 0 results were found</h2>
-            <% end %>
             </section>
             <%= @footer %>
         </div>
