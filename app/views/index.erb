@@ -4,6 +4,7 @@
         <title>Anime Tracker</title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="/css/uikit.css">
+        <link rel="stylesheet" href="/css/partials/anime_title_search.css">
         <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
         <script type="text/javascript" src="/js/uikit.js"></script>
         <script type="text/javascript" src="/js/bindings.js" defer></script>
@@ -11,6 +12,12 @@
         <style>
             * {
                 box-sizing: border-box;
+            }
+            .uk-container {
+                padding: 0;
+            }
+            .main .uk-container-center {
+                background-color: #FFF;
             }
             ul.uk-tab {
                 margin: 0;
@@ -24,28 +31,18 @@
             .search-wrapper {
                 padding: 1em 1em;
             }
-            .container {
-                width: 32%;
-                margin: 0 auto;
-                border: thin solid grey;
-                min-width: 195px;
-                max-width: 763px;
-            }
-            .title-search-wrapper {
-                text-align: center;
-            }
-            .large-bg {
-                background-image: url("https://s-media-cache-ak0.pinimg.com/originals/2f/2f/af/2f2faf04435a0cf2868016f768997add.jpg");
-                background-size: cover;
-                padding: 400px 0;
+            .main {
+                padding-top: 1.6em;
+                height: 100vh;
+                background-color: #f4f4f4;
             }
         </style>
     </head>
     <body id="body">
-        <%= @header %>
-        <section>
-            <div class="large-bg">
-                <div class="container">
+        <div class="uk-container uk-container-center"
+            <%= @header %>
+            <section class="main">
+                <div class="uk-width-medium-1-2 uk-container-center">
                     <ul class="uk-tab" data-uk-tab>
                         <li class="uk-active">
                             <a id="title-search-revealer">Search</a>
@@ -57,9 +54,9 @@
                     <div id="search-wrapper" class="search-wrapper">
                         <%= @site_search_partial %>
                     </div>
-                </div>
-            </div>
-        </section>
-        <%= @footer %>
+                </div>    
+            </section>
+            <%= @footer %>
+        </div>
     </body>
 </html>
