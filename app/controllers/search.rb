@@ -1,7 +1,7 @@
 get '/search/anime/:query' do
   pass if params['query'] == "genres"
-  endpoint = "/search/anime/?query=#{params['query']}"
-  @search_results = get_response_body(get_hummingbird_response(endpoint))
+  endpoint = "/anime/search/#{encode_string(params['query'])}"
+  @search_results = get_response_body(settings.anilist_communicator.make_get_request(endpoint))
   @header = erb :header
   @footer = erb :footer
   @title_search_partial = erb :anime_title_search_partial

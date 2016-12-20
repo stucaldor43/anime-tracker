@@ -108,14 +108,13 @@
                             <div class="result-wrapper uk-grid">
                             <% @search_results.each do |result| %>
                                 <figure class="uk-width-small-1-2 anime-item">
-                                    <a href=<%= "/show/#{result['id']}" %>>
-                                    <img src=<%= "#{result['cover_image']}" %> 
+                                    <a href=<%= '/show/' + "#{result['id']}" %>>
+                                    <img src=<%= "#{result['image_url_lge']}" %> 
                                          width="300" height="300" class="anime-poster">
                                     <figcaption>
-                                        <h2 class="anime-title"><%= result['title'] %></h2>
+                                        <h2 class="anime-title"><%= result['title_english'] %></h2>
                                         <p class="anime-genres">
-                                            <%= result['genres'].map {|genre| genre['name']}.
-                                                join(', ') %>
+                                            <%= result['genres'].join(', ') %>
                                         </p>
                                     </figcaption>
                                     </a>
