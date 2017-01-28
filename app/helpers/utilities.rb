@@ -24,6 +24,82 @@ module Utilities
     URI.encode(str)
   end
   
+  def login(code)
+    form_data = {
+      "grant_type" => "authorization_code",
+      "client_id" => ENV['CLIENT_ID'],
+      "client_secret" => ENV['CLIENT_SECRET'],
+      "redirect_uri" => "http://ruby-sirius49.c9users.io:8081/login",
+      "code" => code,
+    }
+    res = make_anilist_post_request('/auth/access_token', form_data)
+    return if !((200..299) === res.code.to_i)
+    
+    credentials = JSON.parse(res.body)
+    session['access_token'] = credentials['access_token']
+    session['refresh_token'] = credentials['refresh_token']
+    session['token_type'] = credentials['token_type']
+    session['username'] = JSON.parse(make_anilist_get_request('/user').body)['display_name']
+  end
+  
+  def make_anilist_post_request(path, post_data)
+    uri = URI.parse("https://anilist.co/api#{path}")
+    request = Net::HTTP::Post.new(uri)
+    request.set_form_data(post_data)
+    if session['access_token']
+      request['Authorization'] = "#{session['token_type'].capitalize} #{session['access_token']}"
+    end
+    req_options = {
+      use_ssl: uri.scheme == "https",
+    }
+    
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      res = http.request(request)
+      if res.code.to_i > 199 && res.code.to_i < 300
+        res
+      else
+        refresh_anilist_access_token
+        http.request(request)
+      end
+    end
+  end
+  
+  def make_anilist_get_request(endpoint)
+    base_url = 'https://anilist.co/api' 
+    uri = URI("#{base_url}#{endpoint}")
+    request = Net::HTTP::Get.new(uri)
+    if session['access_token']
+      request['Authorization'] = "#{session['token_type'].capitalize} #{session['access_token']}"
+    end
+    req_options = {
+      use_ssl: uri.scheme == "https",
+    }
+    
+    Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      res = http.request(request)
+      if res.code.to_i > 199 && res.code.to_i < 300
+        res
+      else
+        refresh_anilist_access_token
+        http.request(request)
+      end
+    end  
+  end
+  
+  def refresh_anilist_access_token
+    form_data = {
+      "grant_type" => 'refresh_token',
+      "client_id" => ENV['CLIENT_ID'],
+      "client_secret" => ENV['CLIENT_SECRET'],
+      "refresh_token" => session['refresh_token']
+    }
+    res = make_anilist_post_request('/auth/access_token', form_data)
+    return if !((200..299) === res.code.to_i)
+    
+    credentials = JSON.parse(res.body)
+    session['access_token'] = credentials['access_token']
+  end
+  
   def make_hummingbird_post_request(path, post_parameters)
      uri = URI("http://hummingbird.me/api/v1#{path}")
      req = Net::HTTP::Post.new(uri)

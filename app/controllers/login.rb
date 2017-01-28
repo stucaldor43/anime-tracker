@@ -1,6 +1,7 @@
 get '/login' do
   @header = erb :header
   @footer = erb :footer
+  login(params['code']) if params['code'] && !session['username']
   
   erb :login    
 end
