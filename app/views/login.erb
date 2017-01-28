@@ -46,10 +46,11 @@
            <form class="uk-form" method="post" action="/login">
                <fieldset>
                    <legend>Sign In</legend>
-                   <div class="uk-form-row"><input type="text" class="uk-form-large" name="username" placeholder="username"></div>
-                   <div class="uk-form-row"><input type="password" class="uk-form-large" name="password" placeholder="password"></div>
-                   <div class="uk-form-row"><input type="submit" value="login"></div>
-                   <div class="uk-form-row"><button class="uk-button">Create Account</button></div>
+                   <div class="uk-form-row">
+                     <a class="uk-button" href="https://anilist.co/api/auth/authorize?grant_type=authorization_code&client_id=stucaldor43-jcqyc&redirect_uri=http%3A%2F%2Fruby-sirius49.c9users.io%3A8081%2Flogin&response_type=code">
+                       Sign in using Anilist
+                     </a>
+                   </div>
                </fieldset>
            </form>
            </section>
