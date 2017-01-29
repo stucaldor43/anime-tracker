@@ -114,7 +114,7 @@
                             <div class="result-wrapper uk-grid">
                                 <% @search_results.each do |result| %>
                                     <figure class="uk-width-small-1-2 anime-item">
-                                        <a href=<%= "/show/ani-#{result['id']}" %>>
+                                        <a href=<%= "/show/#{result['id']}" %>>
                                         <img src=<%= "#{result['image_url_lge']}" %> 
                                              width="300" height="300" class="anime-poster">
                                         <figcaption>

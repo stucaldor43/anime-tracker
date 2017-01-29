@@ -147,9 +147,13 @@ module Utilities
   end
   
   def show_is_in_user_library?(show_id)
-    library_entries = get_response_body(get_hummingbird_response("/users/#{session['username']}/library"))
-    sorted_library_entries = library_entries.sort {|x, y| x['anime']['id'] <=> y['anime']['id']}
-    sorted_library_entries.index {|entry| entry['anime']['id'] == show_id} ? true : false
+    animelist = JSON.parse(make_anilist_get_request("/user/#{session['username']}/animelist").body)
+    anime_records = []
+    ['completed', 'on_hold', 'dropped', 'plan_to_watch', 'watching'].each do |status|
+      anime_records += animelist['lists'][status] if Array === animelist['lists'][status] && !animelist['lists'][status].empty?
+    end
+    
+    anime_records.find {|record| record['anime']['id'] == show_id}
   end
 end
 
