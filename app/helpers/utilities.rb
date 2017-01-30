@@ -146,6 +146,16 @@ module Utilities
     hummingbird_show_types[id]
   end
   
+  def get_animelist_entry_for_show(show_id)
+    animelist = JSON.parse(make_anilist_get_request("/user/#{session['username']}/animelist").body)
+    anime_records = []
+    ['completed', 'on_hold', 'dropped', 'plan_to_watch', 'watching'].each do |status|
+      anime_records += animelist['lists'][status] if Array === animelist['lists'][status] && !animelist['lists'][status].empty?
+    end
+    
+    anime_records.find {|record| record['anime']['id'] == show_id}  
+  end
+  
   def show_is_in_user_library?(show_id)
     animelist = JSON.parse(make_anilist_get_request("/user/#{session['username']}/animelist").body)
     anime_records = []
