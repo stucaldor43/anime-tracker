@@ -41,7 +41,7 @@ get '/api/user/:username/library' do
 end
 
 before '/api/library/*' do
-  halt 401 unless session['auth_token']
+  halt 401 unless session['access_token']
 end
 
 post '/api/library/:id/positive-rating' do
