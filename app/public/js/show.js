@@ -27,8 +27,8 @@
        }
        
        var url = {
-           currently_watching: "/api/library/" + showId + "?status=currently-watching",
-           plan_to_watch: "/api/library/" + showId + "?status=plan-to-watch",
+           currently_watching: "/api/library/" + showId + "?status=watching",
+           plan_to_watch: "/api/library/" + showId + "?status=plan%20to%20watch",
            completed: "/api/library/" + showId + "?status=completed",
            on_hold: "/api/library/" + showId + "?status=on-hold",
            dropped: "/api/library/" + showId + "?status=dropped"

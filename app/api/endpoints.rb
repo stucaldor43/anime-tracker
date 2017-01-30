@@ -1,5 +1,6 @@
 require 'json'
 require 'net/http'
+require 'uri'
 
 get '/api/partials/anime-title-search-partial' do
   erb :anime_title_search_partial
@@ -128,15 +129,16 @@ end
 
 get '/api/library/:id' do
   show_id = params['id'].to_i
-  legal_statuses = ['currently-watching', 'plan-to-watch', 'completed', 'on-hold', 'dropped' ]
+  legal_statuses = ['watching', 'plan to watch', 'completed', 'on-hold', 'dropped' ]
+  return 400 if !legal_statuses.index(URI::decode(params['status'])) 
   
-  return 400 if !legal_statuses.index(params['status']) 
-  
-  request_parameters = {
-    'auth_token' => session['auth_token'],
-    'status' => params['status']
+  animelist_entry = get_animelist_entry_for_show(show_id)
+  updated_data = {
+    'list_status' => params['status']
   }
-  res = make_hummingbird_post_request("/libraries/#{show_id}", request_parameters)
+  request_data = create_animelist_put_data(animelist_entry, updated_data)
+  
+  res = make_anilist_put_request('/animelist', request_data)
   
   case res
   when Net::HTTPSuccess

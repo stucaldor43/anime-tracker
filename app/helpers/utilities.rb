@@ -86,6 +86,28 @@ module Utilities
     end  
   end
   
+  def make_anilist_put_request(endpoint, data)
+    uri = URI.parse("https://anilist.co/api#{endpoint}")
+    request = Net::HTTP::Put.new(uri)
+    if session['access_token']
+      request['Authorization'] = "#{session['token_type'].capitalize} #{session['access_token']}"
+    end
+    request.set_form_data(data)
+    req_options = {
+      use_ssl: uri.scheme == 'https'
+    }
+    
+    Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      res = http.request(request)
+      if res.code.to_i > 199 && res.code.to_i < 300
+        res
+      else
+        refresh_anilist_access_token
+        http.request(request)
+      end
+    end  
+  end
+  
   def refresh_anilist_access_token
     form_data = {
       "grant_type" => 'refresh_token',
@@ -98,6 +120,17 @@ module Utilities
     
     credentials = JSON.parse(res.body)
     session['access_token'] = credentials['access_token']
+  end
+  
+  def create_animelist_put_data(original_hash, new_hash)
+    form_fields = ['list_status', 'score', 'score_raw', 'episodes_watched', 'rewatched',
+    'notes', 'advanced_rating_scores', 'custom_lists', 'hidden_default']
+    post_merge_hash = {}
+    post_merge_hash['id'] = original_hash['series_id']
+    form_fields.each do |field|
+      post_merge_hash[field] = new_hash[field] || original_hash[field]
+    end
+    post_merge_hash
   end
   
   def make_hummingbird_post_request(path, post_parameters)
