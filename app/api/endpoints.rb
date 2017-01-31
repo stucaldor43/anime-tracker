@@ -121,13 +121,7 @@ end
 
 post '/api/library/:id/remove' do
   show_id = params['id'].to_i
-  if !show_is_in_user_library?(show_id)
-    return 200
-  end
-  request_parameters = {
-    'auth_token' => session['auth_token'],
-  }
-  res = make_hummingbird_post_request("/libraries/#{show_id}/remove", request_parameters)
+  res = make_anilist_delete_request("/animelist/#{show_id}")
   
   case res
   when Net::HTTPSuccess

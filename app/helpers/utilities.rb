@@ -108,6 +108,27 @@ module Utilities
     end  
   end
   
+  def make_anilist_delete_request(endpoint)
+    uri = URI.parse("https://anilist.co/api#{endpoint}")
+    request = Net::HTTP::Delete.new(uri)
+    if session['access_token']
+      request['Authorization'] = "#{session['token_type'].capitalize} #{session['access_token']}"
+    end
+    req_options = {
+      use_ssl: uri.scheme == 'https'
+    }
+    
+    Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      res = http.request(request)
+      if res.code.to_i > 199 && res.code.to_i < 300
+        res
+      else
+        refresh_anilist_access_token
+        http.request(request)
+      end
+    end
+  end
+  
   def refresh_anilist_access_token
     form_data = {
       "grant_type" => 'refresh_token',
