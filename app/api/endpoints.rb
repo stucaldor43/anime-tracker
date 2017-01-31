@@ -47,11 +47,13 @@ end
 
 post '/api/library/:id/positive-rating' do
   show_id = params['id'].to_i
-  request_parameters = {
-    'auth_token' => session['auth_token'],
-    'sane_rating_update' => 5
+  animelist_entry = get_animelist_entry_for_show(show_id)
+  updated_data = {
+    'score' => 9
   }
-  res = make_hummingbird_post_request("/libraries/#{show_id}", request_parameters)
+  request_data = create_animelist_put_data(animelist_entry, updated_data)
+  
+  res = make_anilist_put_request('/animelist', request_data)
   
   case res
   when Net::HTTPSuccess
@@ -63,11 +65,13 @@ end
 
 post '/api/library/:id/neutral-rating' do
   show_id = params['id'].to_i
-  request_parameters = {
-    'auth_token' => session['auth_token'],
-    'sane_rating_update' => 3
+  animelist_entry = get_animelist_entry_for_show(show_id)
+  updated_data = {
+    'score' => 7
   }
-  res = make_hummingbird_post_request("/libraries/#{show_id}", request_parameters)
+  request_data = create_animelist_put_data(animelist_entry, updated_data)
+  
+  res = make_anilist_put_request('/animelist', request_data)
   
   case res
   when Net::HTTPSuccess
@@ -79,11 +83,13 @@ end
 
 post '/api/library/:id/negative-rating' do
   show_id = params['id'].to_i
-  request_parameters = {
-    'auth_token' => session['auth_token'],
-    'sane_rating_update' => 1
+  animelist_entry = get_animelist_entry_for_show(show_id)
+  updated_data = {
+    'score' => 6
   }
-  res = make_hummingbird_post_request("/libraries/#{show_id}", request_parameters)
+  request_data = create_animelist_put_data(animelist_entry, updated_data)
+  
+  res = make_anilist_put_request('/animelist', request_data)
   
   case res
   when Net::HTTPSuccess
@@ -95,11 +101,15 @@ end
 
 post '/api/library/:id/increment-episodes' do
   show_id = params['id'].to_i
-  request_parameters = {
-    'auth_token' => session['auth_token'],
-    'increment_episodes' => true
+  animelist_entry = get_animelist_entry_for_show(show_id)
+  episodes_watched = animelist_entry['episodes_watched']
+  max_episode_count = animelist_entry['anime']['total_episodes'] 
+  updated_data = {
+    'episodes_watched' => ((episodes_watched + 1) <= max_episode_count) ? episodes_watched + 1 : max_episode_count
   }
-  res = make_hummingbird_post_request("/libraries/#{show_id}", request_parameters)
+  request_data = create_animelist_put_data(animelist_entry, updated_data)
+  
+  res = make_anilist_put_request('/animelist', request_data)
   
   case res
   when Net::HTTPSuccess
