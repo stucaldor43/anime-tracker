@@ -20,7 +20,7 @@
         prev.push.apply(prev, records);
         return prev;
     };
-    var activityFeed = new Vue({
+    /* var activityFeed = new Vue({
         el: "#activity-feed",
         data: {
             feed: [],
@@ -55,7 +55,7 @@
             }.bind(this));
             // this.start();
         }
-    });
+    }); */
     
     Vue.component("library-entry", {
        template: "#record",
@@ -65,8 +65,8 @@
        },
        methods: {
            incrementEpisodesWatched: function() {
-                var showId = this.item.anime.id;
-                this.item.episodes_watched += 1;
+                var showId = this.item.id;
+                this.item.episodesWatched += 1;
                 var incrementEpisodesWatched = this.$http.post("/api/library/" + showId + "/increment-episodes");
                 incrementEpisodesWatched.then(function(response) {
                     if (response.status !== 200) {
@@ -75,33 +75,35 @@
                 });
            },
            ratePositive: function() {
-                var showId = this.item.anime.id;
+                var showId = this.item.id;
                 this.$http.post("/api/library/" + showId + "/positive-rating"); 
            },
            rateNeutral: function() {
-                var showId = this.item.anime.id;
+                var showId = this.item.id;
                 this.$http.post("/api/library/" + showId + "/neutral-rating");  
            },
            rateNegative: function() {
-                var showId = this.item.anime.id;
+                var showId = this.item.id;
                 this.$http.post("/api/library/" + showId + "/negative-rating");   
            },
            updateStatus: function(newStatus) {
                var initialStatus = this.item.status;
                this.item.status = newStatus;
-               var showId = this.item.anime.id;
+               var showId = this.item.id;
                var updateStatus = this.$http.get("/api/library/" + showId + "?status=" + newStatus);
                updateStatus.then(function(response) {
                     if (response.status !== 200) {
                         this.item.status = initialStatus;
                         UIkit.notify({
                            message: "<i class='uk-icon-close'></i>Failed to update the status of " + 
-                                    this.item.anime.title + " to " + (newStatus.split("-").join(" ")), 
+                                    this.item.title + " to " + (newStatus.split("-").join(" ")), 
                            status: "info",
                            timeout: 5000,
                            pos: "bottom-center"
                         });
-                    }  
+                        throw Error("Failed to update status");
+                    } 
+                    this.$dispatch("statusUpdated", showId, newStatus);
                     return this.item.status;
                });
            },
@@ -112,6 +114,7 @@
     });
     
     var maxEntriesPerRequest = 8;
+    
     var library = new Vue({
         el: "#library-manager",
         data: {
@@ -126,14 +129,30 @@
                 this.libraryEntries = [];
                 this.revealedEntries = [];
                 var getResponse = function(response) {
-                    return JSON.parse(response.body).data;
+                    var animelist = JSON.parse(response.body).data;
+                    var allLibraryEntries = [];
+                    ["completed", "dropped", "on_hold", "plan_to_watch", "watching"]
+                    .forEach(function(status) {
+                        allLibraryEntries.push.apply(allLibraryEntries, animelist.lists[status]);
+                    });
+                    
+                    return allLibraryEntries.map(function(animeListRecord) {
+                        return {
+                            coverImage: animeListRecord.anime.image_url_lge,
+                            rating: animeListRecord.anime.average_score,
+                            status: animeListRecord.list_status,
+                            title: animeListRecord.anime.title_english,
+                            episodesWatched: animeListRecord.episodes_watched,
+                            id: animeListRecord.anime.id
+                        };
+                    });
                 };
                 var filterEntries = function(entries) {
                     return entries.filter(function(item) {
                         var term = this.searchTerm;
                         
                         if (term.length > 0) {
-                          return item.anime.title.toLowerCase().indexOf(term.toLowerCase()) >= 0; 
+                          return item.title.toLowerCase().indexOf(term.toLowerCase()) >= 0; 
                         }
                         return true;
                     }.bind(this));
@@ -156,11 +175,11 @@
                 }.bind(this);
                 
                 var endpoint = "/api/user/" + this.username + "/library";
-                var libraryEntryStatus = ["currently-watching", "plan-to-watch", "completed", "on-hold", "dropped"];
-                libraryEntryStatus.forEach(function(status) {
-                    var promise = this.$http.get(endpoint + "?status=" + status);
-                    promise.then(getResponse).then(filterEntries).then(setLibraryEntries).then(setRevealedEntries);    
-                }.bind(this));
+                
+                
+                var promise = this.$http.get(endpoint);
+                promise.then(getResponse).then(filterEntries).then(setLibraryEntries).then(setRevealedEntries);    
+                
             },
             scrollHandler: function() {
                 var el = document.querySelector(".shelf-wrapper");
@@ -186,13 +205,37 @@
                     this.isViewingOwnPage = (response.status === 200) ? true : false;
                     return this.isViewingOwnPage;
                 });
+            },
+            updateAnimeStatus: function(id, newStatus) {
+                this.revealedEntries = this.revealedEntries.map(function(entry) {
+                    if (entry.id === id) {
+                        entry.id = id;
+                        return entry;
+                    }
+                    return entry;
+                });
             }
         },
         created: function() {
             var addNextNEntries = function(response) {
-                var allLibraryEntries = JSON.parse(response.body).data;
-                this.libraryEntries.push.apply(this.libraryEntries, allLibraryEntries);
-                return allLibraryEntries;
+                var animelist = JSON.parse(response.body).data;
+                var allLibraryEntries = [];
+                ["completed", "dropped", "on_hold", "plan_to_watch", "watching"]
+                .forEach(function(status) {
+                    allLibraryEntries.push.apply(allLibraryEntries, animelist.lists[status]);
+                });
+                
+                this.libraryEntries.push.apply(this.libraryEntries, allLibraryEntries.map(function(animeListRecord) {
+                    return {
+                        coverImage: animeListRecord.anime.image_url_lge,
+                        rating: animeListRecord.anime.average_score,
+                        status: animeListRecord.list_status,
+                        title: animeListRecord.anime.title_english,
+                        episodesWatched: animeListRecord.episodes_watched,
+                        id: animeListRecord.anime.id
+                    };
+                }));
+                return this.libraryEntries;
             }.bind(this);
             var addToRevealedEntries = function(entries) {
                 if (this.revealedEntries.length >= maxEntriesPerRequest) {
@@ -207,13 +250,16 @@
                 }
             }.bind(this);
             var endpoint = "/api/user/" + this.username + "/library";
-            var libraryEntryStatus = ["currently-watching", "plan-to-watch", "completed", "on-hold", "dropped"];
-            libraryEntryStatus.forEach(function(status) {
-                var promise = this.$http.get(endpoint + "?status=" + status);
-                promise.then(addNextNEntries).then(addToRevealedEntries);    
-            }.bind(this));
+            
+            
+            var promise = this.$http.get(endpoint);
+            promise.then(addNextNEntries).then(addToRevealedEntries);    
+            
             this.setIsViewingOwnPage();
         }
+    });
+    library.$on("statusUpdated", function(id, status) {
+        this.updateAnimeStatus(id, status);
     });
     
     var myLazyLoad = new LazyLoad();
