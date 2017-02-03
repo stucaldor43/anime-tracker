@@ -57,28 +57,22 @@
                </li>
                <li id="activity-feed">
                    <div v-for="item in feed">
-                       <div v-show="item.substory_type === 'watchlist_status_update'">
-                           <p v-show="item.new_status === 'currently-watching'">
-                               {{ username }} is currently watching <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                       <div>
+                           <p v-show="item.status === 'watched episode'">
+                               {{ username }} finished watching episode {{ item.value }} of <a :href="'/show/' + item.id">{{ item.title }}</a>
                            </p>
-                           <p v-show="item.new_status === 'plan-to-watch'">
-                               {{ username }} plans to watch <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                           <p v-show="item.status === 'plans to watch'">
+                               {{ username }} plans to watch <a :href="'/show/' + item.id">{{ item.title }}</a>
                            </p>
-                           <p v-show="item.new_status === 'completed'">
-                               {{ username }} completed <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                           <p v-show="item.status === 'completed'">
+                               {{ username }} completed <a :href="'/show/' + item.id">{{ item.title }}</a>
                            </p>
-                           <p v-show="item.new_status === 'on-hold'">
-                               {{ username }} has put <a :href="'/show/' + item.media.id">{{ item.media.title }}</a> on hold
+                           <p v-show="item.status === 'paused watching'">
+                               {{ username }} has put <a :href="'/show/' + item.id">{{ item.title }}</a> on hold
                            </p>
-                           <p v-show="item.new_status === 'dropped'">
-                               {{ username }} has dropped <a :href="'/show/' + item.media.id">{{ item.media.title }}</a>
+                           <p v-show="item.status === 'dropped'">
+                               {{ username }} has dropped <a :href="'/show/' + item.id">{{ item.title }}</a>
                            </p>
-                       </div>
-                       <div v-show="item.substory_type === 'watched_episode'">
-                           <p>{{ username }} watched episode {{ item.episode_number }} of <a :href="'/show/' + item.media.id">{{ item.media.title}}</a></p>
-                       </div>
-                       <div v-show="item.substory_type === 'followed'">
-                           <p>{{ username }} is now following <a :href="'/library/user/' + item.followed_user.name">{{ item.followed_user.name}}</a></p>
                        </div>
                     </div>
                </li>

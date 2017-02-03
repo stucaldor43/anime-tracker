@@ -1,61 +1,44 @@
 (function() {
-    var sortByDateAscending = function(a, b) {
-        var elapsedTimeA = new Date(a.created_at).getTime();
-        var elapsedTimeB = new Date(b.created_at).getTime();
-        
-        if (elapsedTimeA > elapsedTimeB) {
-            return 1;    
-        }
-        else if (elapsedTimeA < elapsedTimeB) {
-            return -1;
-        }
-        return 0;    
-    };
-    var getCollectionOfSubstoriesMergedWithAnimeObjects = function(prev, story_object) {
-        var records = [];
-        story_object.substories.forEach(function(substory) {
-            substory.media = story_object.media;
-            records.push(substory);
-        });
-        prev.push.apply(prev, records);
-        return prev;
-    };
-    /* var activityFeed = new Vue({
+    var activityFeed = new Vue({
         el: "#activity-feed",
         data: {
             feed: [],
             username: window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1)
         },
         methods: {
-            // start: function() {
-            //     setInterval(function() {
-            //         this.$http.get("/api/feed/" + this.username).then(function addNewSubstoriesToFeed(response) {
-            //             var substories = JSON.parse(response.data).data;
-            //             var lastFeedItem = this.feed[this.feed.length - 1];
-            //             var lastFeedItemTime = new Date(lastFeedItem.created_at).getTime();
-                        
-            //             var newSubstories = substories
-            //                 .reduce(getCollectionOfSubstoriesMergedWithAnimeObjects, [])
-            //                 .filter(function retainOnlyNewSubstories(item) {
-            //                     return new Date(item.created_at) > lastFeedItemTime;
-            //                 }).sort(sortByDateAscending);
-            //             this.feed.push.apply(this.feed, newSubstories);
-            //         }.bind(this));
-            //     }.bind(this), 10000);
-            // }
+            start: function() {
+                setInterval(function() {
+                    Vue.http.get("/api/feed/" + this.username)
+                    .then(function(response) {
+                        this.feed = JSON.parse(response.body).data.map(function(activity) {
+                            return {
+                                status: activity.status,
+                                title: activity.series.title_english,
+                                dateCreated: activity.created_at,
+                                episodeNumber: activity.value || null,
+                                id: activity.series.id
+                            };
+                        });
+                    }.bind(this));    
+                }.bind(this), 20000);
+            }
         },
         created: function() {
-            Vue.http.get("/api/feed/" + this.username).then(function provideInitialSubstoriesToFeed(response) {
-                var substories = JSON.parse(response.data).data;
-                var allSubstories = substories
-                    .reduce(getCollectionOfSubstoriesMergedWithAnimeObjects, [])
-                    .sort(sortByDateAscending);
-                this.feed.push.apply(this.feed, allSubstories);
-                return response;
+            Vue.http.get("/api/feed/" + this.username)
+            .then(function(response) {
+                this.feed = JSON.parse(response.body).data.map(function(activity) {
+                    return {
+                        status: activity.status,
+                        title: activity.series.title_english,
+                        dateCreated: activity.created_at,
+                        episodeNumber: activity.value || null,
+                        id: activity.series.id
+                    };
+                });
             }.bind(this));
-            // this.start();
+            this.start();
         }
-    }); */
+    });
     
     Vue.component("library-entry", {
        template: "#record",

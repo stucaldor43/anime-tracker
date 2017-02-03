@@ -155,10 +155,10 @@ get '/api/library/:id' do
 end
 
 get '/api/feed/:username' do
-  res = get_hummingbird_response("/users/#{params['username']}/feed")
+  res = make_anilist_get_request("/user/#{params['username']}/activity")
   JSON.generate({
-    "status": "success", 
-    "data": get_response_body(res)
+      "status": "success", 
+      "data": JSON.parse(res.body)
   })
 end
 
