@@ -121,6 +121,26 @@ post '/api/library/:id/increment-episodes' do
   end
 end
 
+post '/api/library/:id/decrement-episodes' do
+  show_id = params['id'].to_i
+  animelist_entry = get_animelist_entry_for_show(show_id)
+  episodes_watched = animelist_entry['episodes_watched']
+  max_episode_count = animelist_entry['anime']['total_episodes'] 
+  updated_data = {
+    'episodes_watched' => ((episodes_watched - 1) >= 0 && (episodes_watched - 1) < max_episode_count) ? episodes_watched - 1 : episodes_watched
+  }
+  request_data = create_animelist_put_data(animelist_entry, updated_data)
+  
+  res = make_anilist_put_request('/animelist', request_data)
+  
+  case res
+  when Net::HTTPSuccess
+    200
+  else
+    500
+  end
+end
+
 post '/api/library/:id/remove' do
   show_id = params['id'].to_i
   res = make_anilist_delete_request("/animelist/#{show_id}")

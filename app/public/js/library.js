@@ -57,6 +57,16 @@
                     }
                 });
            },
+           decrementEpisodesWatched: function() {
+                var showId = this.item.id;
+                this.item.episodesWatched -= 1;
+                var decreaseEpisodesWatched = this.$http.post("/api/library/" + showId + "/decrement-episodes");
+                decreaseEpisodesWatched.then(function(response) {
+                    if (response.status !== 200) {
+                        this.item.episodes_watched += 1;
+                    }
+                });   
+           },
            ratePositive: function() {
                 var showId = this.item.id;
                 this.$http.post("/api/library/" + showId + "/positive-rating"); 

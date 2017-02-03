@@ -84,6 +84,7 @@
                 <div class="top-card" v-if="canModifyLibrary">
                     <img :src="item.coverImage" :data-original="item.coverImage" width="470" height="710" />
                     <button @click="incrementEpisodesWatched"><i class="uk-icon-arrow-up" title="increase episodes watched"></i></button>
+                    <button @click="decrementEpisodesWatched"><i class="uk-icon-arrow-down" title="decrease episodes watched"></i></button>
                     <div class="community-rating">{{ Math.floor(item.rating)  }}</div>
                 </div>
                 <div class="top-card" v-else>
