@@ -10,6 +10,11 @@ get '/api/partials/anime-genre-search-form-partial' do
   erb :anime_genre_search_form_partial
 end
 
+get '/logout' do
+  session.each {|key,value| session[key] = nil}
+  redirect to("/")
+end
+
 get '/api/authorized/:name' do
   params['name'] == session['username'] ? 200 : 401
 end
