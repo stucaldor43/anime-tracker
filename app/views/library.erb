@@ -45,11 +45,30 @@
            <ul id="tab-contents" class="uk-switcher">
                <li id="library-manager">
                    <div>
-                       <input type="search" v-model.trim="searchTerm" @keyup.enter="fetchLibrary">
+                       <input type="search" v-model.trim="searchTerm" @keyup.enter="displaySearchResults">
+                   </div>
+                   <div>
+                       <ul>
+                          <li>
+                            <label for="watching"><input @change="handleFilterToggle" id="watching" name="filter" type="checkbox" value="watching">Watching</label>
+                          </li>
+                          <li>
+                            <label for="on_hold"><input @change="handleFilterToggle" id="on_hold" name="filter" type="checkbox" value="on-hold">On hold</label>
+                          </li>
+                          <li>
+                            <label for="plan_to_watch"><input @change="handleFilterToggle" id="plan_to_watch" name="filter" type="checkbox" value="plan to watch">Plan to watch</label>
+                          </li>
+                          <li>
+                            <label for="completed"><input @change="handleFilterToggle" id="completed" name="filter" type="checkbox" value="completed">Completed</label>
+                          </li>
+                          <li>
+                            <label for="dropped"><input @change="handleFilterToggle" id="dropped" name="filter" type="checkbox" value="dropped">Dropped</label>
+                          </li>
+                       </ul>
                    </div>
                    <div class="shelf-wrapper" style="height: 500px; overflow: auto" @scroll="scrollHandler">
                        <div class="shelf">
-                           <div class="uk-width-small-1-2 uk-width-large-1-4 shelf-item" v-for="animeItem in revealedEntries">
+                           <div class="uk-width-small-1-2 uk-width-large-1-4 shelf-item" v-for="animeItem in visibleLibraryEntries">
                                <library-entry :item="animeItem" :can-modify-library="isViewingOwnPage"></library-entry>
                            </div>
                        </div>

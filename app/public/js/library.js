@@ -100,6 +100,13 @@
                     return this.item.status;
                });
            },
+           removeFromLibrary: function() {
+               var showId = this.item.id;
+               this.$http.post("/api/library/" + showId + "/remove")
+               .then(function() {
+                   this.$dispatch("entryRemoved", showId);
+               });
+           },
            hideDropdown: function(e) {
                e.target.parentNode.style.display = "none";
            }
@@ -108,151 +115,164 @@
     
     var maxEntriesPerRequest = 8;
     
+    var FILTER = "filter";
+    var FETCH_ALL = "fetch";
+    var REVEAL = "reveal";
+    var UPDATE_STATUS = "update";
+    
+    function reducer(state, action) {
+    	switch (action.type) {
+    		case FETCH_ALL:
+    			return Object.assign({}, state, {
+    				allLibraryEntries: action.libraryEntries,
+    				visibleLibraryEntries: action.postFetchVisibleLibraryEntries
+    			});
+    		case UPDATE_STATUS:
+    			return Object.assign({}, state, {
+    				allLibraryEntries: action.postUpdateLibraryEntries
+    			});
+    		case REVEAL:
+    			return Object.assign({}, state, {
+    				visibleLibraryEntries: action.revealedEntries
+    			});
+    		case FILTER:
+    			return Object.assign({}, state, {
+    				allLibraryEntries: action.postFilterLibraryEntries,
+    				visibleLibraryEntries: action.visibleLibraryEntries
+    			});
+    		default:
+    			return state;
+    	}
+    }
+    
+    function mutateVueInstanceData(instance, action) {
+    	var newState = reducer(instance.$data, action);
+    	instance.$data = Object.assign({}, instance.$data, newState);
+    }
     var library = new Vue({
-        el: "#library-manager",
-        data: {
-            searchTerm: "",
-            libraryEntries: [],
-            revealedEntries: [],
-            username: window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1),
-            isViewingOwnPage: false
-        },
-        methods: {
-            fetchLibrary: function(e) {
-                this.libraryEntries = [];
-                this.revealedEntries = [];
-                var getResponse = function(response) {
-                    var animelist = JSON.parse(response.body).data;
-                    var allLibraryEntries = [];
-                    ["completed", "dropped", "on_hold", "plan_to_watch", "watching"]
-                    .forEach(function(status) {
-                        allLibraryEntries.push.apply(allLibraryEntries, animelist.lists[status]);
-                    });
-                    
-                    return allLibraryEntries.map(function(animeListRecord) {
-                        return {
-                            coverImage: animeListRecord.anime.image_url_lge,
-                            rating: animeListRecord.anime.average_score,
-                            status: animeListRecord.list_status,
-                            title: animeListRecord.anime.title_english,
-                            episodesWatched: animeListRecord.episodes_watched,
-                            id: animeListRecord.anime.id
-                        };
-                    });
-                };
-                var filterEntries = function(entries) {
-                    return entries.filter(function(item) {
-                        var term = this.searchTerm;
-                        
-                        if (term.length > 0) {
-                          return item.title.toLowerCase().indexOf(term.toLowerCase()) >= 0; 
-                        }
-                        return true;
-                    }.bind(this));
-                }.bind(this);
-                var setLibraryEntries = function(filteredResults) {
-                    this.libraryEntries.push.apply(this.libraryEntries, filteredResults);
-                    return filteredResults;
-                }.bind(this);
-                var setRevealedEntries = function(entries) {
-                    if (this.revealedEntries.length >= maxEntriesPerRequest) {
-                        return;
-                    }
-                    
-                    if ((maxEntriesPerRequest - this.revealedEntries.length) <= entries.length) {
-                        this.revealedEntries.push.apply(this.revealedEntries, entries.slice(0, maxEntriesPerRequest - this.revealedEntries.length)); 
-                    }
-                    else {
-                        this.revealedEntries.push.apply(this.revealedEntries, entries); 
-                    }
-                }.bind(this);
-                
-                var endpoint = "/api/user/" + this.username + "/library";
-                
-                
-                var promise = this.$http.get(endpoint);
-                promise.then(getResponse).then(filterEntries).then(setLibraryEntries).then(setRevealedEntries);    
-                
-            },
-            scrollHandler: function() {
-                var el = document.querySelector(".shelf-wrapper");
-                if (el.scrollTop + el.offsetHeight >= el.scrollHeight - Math.floor(.80 * el.scrollHeight)) {
-                    this.addMoreRevealedEntries();
-                }
-            },
-            addMoreRevealedEntries: function() {
-                var allEntries = this.libraryEntries;
-                var revealedEntries = this.revealedEntries;
-                if (allEntries.length === revealedEntries.length) {
-                    return;
-                }
-                var startIndex = revealedEntries.length;
-                var endIndex = (startIndex + maxEntriesPerRequest <= allEntries.length) ? startIndex + maxEntriesPerRequest : allEntries.length;
-                var newlyRevealedEntries = this.libraryEntries.slice(startIndex, endIndex);
-                this.revealedEntries.push.apply(this.revealedEntries, newlyRevealedEntries);
-            },
-            setIsViewingOwnPage: function() {
-                var username = window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1);
-                var promise = this.$http.get("/api/authorized/" + username);
-                promise.then(function(response) {
-                    this.isViewingOwnPage = (response.status === 200) ? true : false;
-                    return this.isViewingOwnPage;
-                });
-            },
-            updateAnimeStatus: function(id, newStatus) {
-                this.revealedEntries = this.revealedEntries.map(function(entry) {
-                    if (entry.id === id) {
-                        entry.id = id;
-                        return entry;
-                    }
-                    return entry;
-                });
-            }
-        },
-        created: function() {
-            var addNextNEntries = function(response) {
-                var animelist = JSON.parse(response.body).data;
-                var allLibraryEntries = [];
-                ["completed", "dropped", "on_hold", "plan_to_watch", "watching"]
-                .forEach(function(status) {
-                    allLibraryEntries.push.apply(allLibraryEntries, animelist.lists[status]);
-                });
-                
-                this.libraryEntries.push.apply(this.libraryEntries, allLibraryEntries.map(function(animeListRecord) {
-                    return {
-                        coverImage: animeListRecord.anime.image_url_lge,
-                        rating: animeListRecord.anime.average_score,
-                        status: animeListRecord.list_status,
-                        title: animeListRecord.anime.title_english,
-                        episodesWatched: animeListRecord.episodes_watched,
-                        id: animeListRecord.anime.id
-                    };
-                }));
-                return this.libraryEntries;
-            }.bind(this);
-            var addToRevealedEntries = function(entries) {
-                if (this.revealedEntries.length >= maxEntriesPerRequest) {
-                    return;
-                }
-                
-                if ((maxEntriesPerRequest - this.revealedEntries.length) <= entries.length) {
-                    this.revealedEntries.push.apply(this.revealedEntries, entries.slice(0, maxEntriesPerRequest - this.revealedEntries.length)); 
-                }
-                else {
-                    this.revealedEntries.push.apply(this.revealedEntries, entries); 
-                }
-            }.bind(this);
-            var endpoint = "/api/user/" + this.username + "/library";
-            
-            
-            var promise = this.$http.get(endpoint);
-            promise.then(addNextNEntries).then(addToRevealedEntries);    
-            
-            this.setIsViewingOwnPage();
-        }
+    	el: "#library-manager",
+    	data: {
+    		searchTerm: "",
+    		allLibraryEntries: [],
+    		visibleLibraryEntries: [],
+    		username: window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1),
+    		isViewingOwnPage: false
+    	},
+    	methods: {
+    		fetchLibraryEntries: function() {
+    			var endpoint = "/api/user/" + this.username + "/library";
+    			var libraryData = [];
+    			var promise = this.$http.get(endpoint).then(function(response) {
+    				var userLibrary = JSON.parse(response.body).data;
+    				["completed", "dropped", "on_hold", "plan_to_watch", "watching"].forEach(function(status) {
+    					libraryData.push.apply(libraryData, userLibrary.lists[status]);
+    				});
+    				var libraryEntries = libraryData.map(function(animeListRecord) {
+    					return {
+    						coverImage: animeListRecord.anime.image_url_lge,
+    						rating: animeListRecord.anime.average_score,
+    						status: animeListRecord.list_status,
+    						title: animeListRecord.anime.title_english,
+    						episodesWatched: animeListRecord.episodes_watched,
+    						id: animeListRecord.anime.id
+    					};
+    				});
+    				mutateVueInstanceData(this, {
+    					type: FETCH_ALL,
+    					libraryEntries: libraryEntries,
+    					postFetchVisibleLibraryEntries: []
+    				});
+    				return libraryEntries;
+    			}.bind(this));
+    			return promise;
+    		},
+    		handleFilterToggle: function(e) {
+    			var filteringCheckBoxes = document.querySelectorAll("[name='filter']");
+    			if (!e.target.checked) {
+    				this.filterLibraryEntries();
+    				return;
+    			}
+    			
+    			for (var i = 0; i < filteringCheckBoxes.length; i++) {
+    				filteringCheckBoxes[i].checked = (e.target !== filteringCheckBoxes[i]) ? false : true;
+    			}
+    			this.fetchLibraryEntries().then(this.filterLibraryEntries);
+    		},
+    		filterLibraryEntries: function() {
+    			var checkboxes = document.querySelectorAll("[name='filter']");
+    			var selectedCheckBox;
+    			for (var i = 0; i < checkboxes.length; i++) {
+    				if (checkboxes[i].checked) {
+    					selectedCheckBox = checkboxes[i];
+    					break;
+    				}
+    			}
+    			var filterIsActive = (selectedCheckBox) ? true : false;
+    			if (!filterIsActive) {
+    				this.fetchLibraryEntries().then(this.revealMoreEntries);
+    				return;
+    			}
+    			var postFilterLibraryEntries = this.allLibraryEntries.filter(function(entry) {
+    				return entry.status === selectedCheckBox.value;
+    			}.bind(this));
+    			mutateVueInstanceData(this, {
+    				type: FILTER,
+    				postFilterLibraryEntries: postFilterLibraryEntries,
+    				visibleLibraryEntries: []
+    			});
+    			this.revealMoreEntries();
+    		},
+    		updateAnimeStatus: function(id, status) {
+    			var postUpdateLibraryContents = this.allLibraryEntries.map(function(animeListRecord) {
+    				if (animeListRecord.id === id) {
+    					animeListRecord.status = status;
+    				}
+    				return animeListRecord;
+    			});
+    			mutateVueInstanceData(this, {
+    				type: UPDATE_STATUS,
+    				postUpdateLibraryEntries: postUpdateLibraryContents
+    			});
+    		},
+    		revealMoreEntries: function() {
+    			var entries;
+    			if (this.visibleLibraryEntries.length < this.allLibraryEntries.length) {
+    				var difference = this.allLibraryEntries.length - this.visibleLibraryEntries.length;
+    				if (difference <= maxEntriesPerRequest) {
+    					entries = this.allLibraryEntries;
+    				} else {
+    					var numberOfVisibleEntries = this.visibleLibraryEntries.length;
+    					entries = this.visibleLibraryEntries.concat(this.allLibraryEntries.slice(numberOfVisibleEntries, numberOfVisibleEntries + maxEntriesPerRequest));
+    				}
+    			} else {
+    				entries = this.visibleLibraryEntries;
+    			}
+    			mutateVueInstanceData(this, {
+    				type: REVEAL,
+    				revealedEntries: entries
+    			});
+    		},
+    		displaySearchResults: function() {},
+    		scrollHandler: function() {
+    			var el = document.querySelector(".shelf-wrapper");
+    			if (el.scrollTop + el.offsetHeight >= el.scrollHeight - Math.floor(.80 * el.scrollHeight)) {
+    				this.revealMoreEntries();
+    			}
+    		},
+    		setIsViewingOwnPage: function() {
+    			this.$http.get("/api/authorized/" + this.username).then(function(response) {
+    				this.isViewingOwnPage = (response.status === 200) ? true : false;
+    				return this.isViewingOwnPage;
+    			});
+    		},
+    	},
+    	created: function() {
+    		this.fetchLibraryEntries().then(this.revealMoreEntries);
+    		this.setIsViewingOwnPage();
+    	}
     });
     library.$on("statusUpdated", function(id, status) {
-        this.updateAnimeStatus(id, status);
+    	this.updateAnimeStatus(id, status);
     });
     
     var myLazyLoad = new LazyLoad();
