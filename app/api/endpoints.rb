@@ -10,6 +10,15 @@ get '/api/partials/anime-genre-search-form-partial' do
   erb :anime_genre_search_form_partial
 end
 
+get '/api/feed/:username' do
+  res = settings.anilist_communicator.make_get_request("/user/#{params['username']}/activity")
+  
+  JSON.generate({
+      "status": "success", 
+      "data": JSON.parse(res.body)
+  })
+end
+
 get '/logout' do
   session.each {|key,value| session[key] = nil}
   redirect to("/")
@@ -32,7 +41,7 @@ get '/api/search/anime/genres' do
 end
 
 get '/api/user/:username/library' do
-  res = make_anilist_get_request("/user/#{params['username']}/animelist")
+  res = settings.anilist_communicator.make_get_request("/user/#{params['username']}/animelist")
   
   case res
   when Net::HTTPSuccess
@@ -178,12 +187,3 @@ get '/api/library/:id' do
     500
   end
 end
-
-get '/api/feed/:username' do
-  res = make_anilist_get_request("/user/#{params['username']}/activity")
-  JSON.generate({
-      "status": "success", 
-      "data": JSON.parse(res.body)
-  })
-end
-
