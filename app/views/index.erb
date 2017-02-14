@@ -19,18 +19,6 @@
             .main .uk-container-center {
                 background-color: #FFF;
             }
-            ul.uk-tab {
-                margin: 0;
-                padding: 0;
-                display: inline-block;
-            }
-            .uk-tab li {
-                list-style: none;
-                display: inline-block;
-            }
-            .search-wrapper {
-                padding: 1em 1em;
-            }
             .main {
                 padding-top: 1.6em;
                 height: 100vh;
@@ -41,19 +29,9 @@
     <body id="body">
         <div class="uk-container uk-container-center"
             <%= @header %>
+            <%= @site_search_partial %>
             <section class="main">
                 <div class="uk-width-medium-1-2 uk-container-center">
-                    <ul class="uk-tab" data-uk-tab>
-                        <li class="uk-active">
-                            <a id="title-search-revealer">Search</a>
-                        </li>
-                        <li>
-                            <a id="genre-search-revealer">Genre Search</a>
-                        </li>
-                    </ul>
-                    <div id="search-wrapper" class="search-wrapper">
-                        <%= @site_search_partial %>
-                    </div>
                 </div>    
             </section>
             <%= @footer %>
