@@ -103,11 +103,7 @@
     <body id="body">
         <div class="uk-container uk-container-center">
             <%= @header %>
-            <section class="uk-width-1-1">
-                <div class="uk-width-medium-4-5 uk-container-center">
-                    <%= @title_search_partial %>
-                </div>
-            </section>
+            <%= @title_search_partial %>
             <section class="uk-grid uk-width-1-1">
                 <div class="uk-width-medium-4-5 uk-container-center">
                     <% if @search_results.length > 0 %>

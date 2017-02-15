@@ -47,6 +47,39 @@
         window.location.assign("/search/anime/" + encodeURI(searchTerm)); 
     }
     
+    function retrieveAllAncestors(node) {
+        var currentNode = node;
+        var ancestors = [];
+        var done = false;
+        
+        while (!done) {
+            if (currentNode.tagName === "HTML") {
+                done = true;
+                break;
+            }
+            ancestors.push(currentNode.parentNode);
+            currentNode = currentNode.parentNode;
+        }
+        return ancestors;
+    }
+    
+    function subNavToggleHandler(e) {
+        var formElement = qs(".genres-container form");
+        var ancestors = retrieveAllAncestors(e.target);
+        var eventTargetHasFormAncestor = (ancestors.indexOf(formElement) >= 0) ? true : false;
+        var formIsVisible  = (formElement.style.display === "none") ? false : true;
+        
+        if (formIsVisible && !eventTargetHasFormAncestor) {
+            formElement.style.display = "none";
+            return;
+        }
+        else if (!formIsVisible && e.target === qs(".fake-link")) {
+            formElement.style.display = "block";
+        }
+    }
+    
+    qs(".genres-container form").style.display = "none";
     affixEvent(qs("body"), "click", sendUserToSearchResultsPage);
     affixEvent(qs("body"), "keypress", sendUserToSearchResultsPage);
+    affixEvent(qs("body"), "click", subNavToggleHandler);
 })(window);
