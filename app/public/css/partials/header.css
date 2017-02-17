@@ -1,0 +1,17 @@
+* {
+    outline: thin solid red;
+}
+
+.home-link-container {
+    float: left;
+}
+
+.user-panel {
+    float: left;
+}
+
+.panel-contents-wrapper {
+    max-width: 90%;
+    float: right;
+}
+

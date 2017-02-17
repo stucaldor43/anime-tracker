@@ -1,5 +1,28 @@
 <header class="uk-width-1-1">
-    <div class="uk-width-medium-4-5 uk-container-center">
-        <h1><a href="/">Anime Tracker</a></h1>
+    <div class="uk-width-4-5 uk-container-center uk-clearfix">
+        <div class="home-link-container uk-width-small-5-10">
+            <h1><a href="/">Anime Tracker</a></h1>
+        </div>
+        <div class="user-panel uk-width-small-5-10 uk-clearfix">
+            <div class="panel-contents-wrapper">
+                <% if @authorized %>
+                    <div class="user-greeting-container">
+                        <span>Hello <%= @username %>!</span>
+                    </div>
+                    <div class="action-buttons-container">
+                        <button class="uk-button library-button"><a href=<%= "/library/user/#{@username}"%>>Library</a></button>
+                        <button class="uk-button sign-out-button"><a href="/logout">Sign Out</a></button>
+                    </div>
+                <% else %>
+                    <div class="action-buttons-container">
+                        <button class="uk-button sing-in-button">
+                            <a href="https://anilist.co/api/auth/authorize?grant_type=authorization_code&client_id=stucaldor43-jcqyc&redirect_uri=http%3A%2F%2Fruby-sirius49.c9users.io%3A8081%2Flogin&response_type=code">
+                                Sign In
+                            </a>
+                        </button>
+                    </div>
+                <% end %>
+            </div>
+        </div>
     </div>
 </header>
