@@ -22,3 +22,8 @@ helpers do
     views.each {|v| super(v, name, engine, &block)}
   end
 end
+
+before "/*" do
+  @authorized = !session['access_token'].nil?
+  @username = session['username']
+end
