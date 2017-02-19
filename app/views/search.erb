@@ -11,10 +11,16 @@
         <style>
             * {
                 box-sizing: border-box;
+                outline: thin solid;
+            }
+            
+            .title-search-wrapper {
+                padding-right: 8px;   
             }
             
             body > .uk-container {
-                padding: 0;    
+                padding: 0;
+                max-width: 1200px;
             }
             
             .uk-grid {
@@ -25,10 +31,38 @@
                 padding-left: 0;    
             }
             
+            .result-wrapper {
+                margin-left: -8px;    
+            }
+            
             .anime-item {
                 margin-bottom: 12px;
                 text-align: center;
                 position: relative;
+            }
+            
+            @media (max-width: 480px) {
+                .anime-item {
+                    margin: 0 auto 12px auto;
+                }
+            }
+            
+            @media (min-width: 480px) {
+                .anime-item {
+                    width: 50%;
+                }
+            }
+            
+            @media (min-width: 700px) {
+                .anime-item {
+                    width: 33.3%;
+                }
+            }
+            
+            @media (min-width: 1178px) {
+                .anime-item {
+                    width: 25%;
+                }
             }
             
             .anime-item .anime-poster {
@@ -105,12 +139,12 @@
             <%= @header %>
             <%= @title_search_partial %>
             <section class="uk-grid uk-width-1-1">
-                <div class="uk-width-medium-4-5 uk-container-center">
+                <div class="uk-width-small-4-5 uk-container-center">
                     <% if @search_results.length > 0 %>
-                        <div class="wrapper uk-width-medium-7-10">
+                        <div class="wrapper uk-width-1-1">
                             <div class="result-wrapper uk-grid">
                             <% @search_results.each do |result| %>
-                                <figure class="uk-width-small-1-2 anime-item">
+                                <figure class="anime-item">
                                     <a href=<%= '/show/' + "#{result['id']}" %>>
                                     <img src=<%= "#{result['image_url_lge']}" %> 
                                          width="300" height="300" class="anime-poster">
@@ -128,9 +162,6 @@
                     <% else %>
                         <h2>Sorry, 0 results were found</h2>
                     <% end %>
-                    <aside>
-                        <%= @genre_search_form_partial %>
-                    </aside>
                 </div>
             </section>
             <%= @footer %>
