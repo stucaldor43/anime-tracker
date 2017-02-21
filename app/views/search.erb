@@ -11,7 +11,7 @@
         <style>
             * {
                 box-sizing: border-box;
-                outline: thin solid;
+                outline: thin solid orange;
             }
             
             .title-search-wrapper {
@@ -21,6 +21,16 @@
             body > .uk-container {
                 padding: 0;
                 max-width: 1200px;
+            }
+            
+            @media (orientation: portrait) {
+                body > .uk-container {
+                    max-width: 100%;
+                }    
+            }
+            
+            .content {
+                min-height: 700px;    
             }
             
             .uk-grid {
@@ -39,34 +49,38 @@
                 margin-bottom: 12px;
                 text-align: center;
                 position: relative;
+                width: 33.3%;
+                padding: 8px;
             }
             
-            @media (max-width: 480px) {
+            @media (orientation: portrait) and (max-width: 480px) {
                 .anime-item {
-                    margin: 0 auto 12px auto;
+                    width: 100%;
                 }
             }
             
-            @media (min-width: 480px) {
-                .anime-item {
-                    width: 50%;
+            @media (orientation: portrait), (orientation: landscape) {
+                .anime-poster {
+                    height: 270px;
                 }
             }
             
-            @media (min-width: 700px) {
-                .anime-item {
-                    width: 33.3%;
+            @media (orientation: portrait) and (max-width: 480px) {
+                .anime-poster {
+                    height: 400px;
                 }
             }
             
-            @media (min-width: 1178px) {
-                .anime-item {
-                    width: 25%;
+            @media (min-width: 768px) and (orientation: landscape) {
+                .anime-poster {
+                    height: 290px;
                 }
             }
             
-            .anime-item .anime-poster {
-                height: 318px;
+            @media (min-width: 968px) and (orientation: landscape) {
+                .anime-poster {
+                    height: 388px;
+                }
             }
             
             .anime-title {
@@ -85,6 +99,7 @@
                 background-color: #f4f4f4;
                 max-width: 80%;
                 text-align: left;
+                display: none;
             }
             
             .title-search-wrapper {
@@ -138,9 +153,9 @@
         <div class="uk-container uk-container-center">
             <%= @header %>
             <%= @title_search_partial %>
-            <section class="uk-grid uk-width-1-1">
+            <section class="uk-grid uk-width-1-1 content">
                 <div class="uk-width-small-4-5 uk-container-center">
-                    <% if @search_results.length > 0 %>
+                    <% if Array === @search_results %>
                         <div class="wrapper uk-width-1-1">
                             <div class="result-wrapper uk-grid">
                             <% @search_results.each do |result| %>
