@@ -31,78 +31,76 @@
         </style>
     </head>
     <body id="body">
-       <div class="uk-grid">    
+       <div class="uk-container uk-container-center">    
             <%= @header %>
             <section class="uk-width-1-1">
                 <%= @title_search_partial %>
             </section>
-            <section class="uk-width-1-1">
-                <div>
-                    <div class="grounder">
-                        <div class="uk-clearfix">
-                            <div class="anime-cover-container uk-float-left uk-width-medium-4-10">
-                                <img src="<%= @anime['image_url_lge'] %>" width="300" height="300">
-                            </div>
-                            <div class="uk-float-left anime-info-wrapper uk-width-medium-6-10">
-                                <h2 class="anime-title"><%= @anime['title_english'] %></h2>
-                                <div class="anime-star-rating">
-                                    <%= "#{(@anime['average_score'] / 10).round} / 10" %>
-                                    <i class="uk-icon-star"></i>
-                                </div>
-                                <div>
-                                    <span class="anime-type">
-                                        <%= @anime['type'] %>
-                                    </span>
-                                    <span class="show-status">
-                                        <%= @anime['airing_status'] %>
-                                    </span>
-                                </div>
-                                <div>
-                                    <span>
-                                        <%= "#{@anime['total_episodes']} episodes" %>
-                                    </span>
-                                    <span>
-                                        <%= "#{@anime['duration']} minutes" %>
-                                    </span>
-                                </div>
-                                <% if @authorized && !@show_is_in_library %>
-                                    <div>
-                                        <div data-uk-dropdown="{mode: 'click'}">
-                                            <button id="addShow" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>Add to Library</button>
-                                            <div class="uk-dropdown">
-                                                <ul class="status-list">
-                                                    <li><span class="currently_watching">Currently watching</a></li>
-                                                    <li><span class="plan_to_watch">Plan to watch</a></li>
-                                                    <li><span class="completed">Completed</a></li>
-                                                    <li><span class="on_hold">On hold</a></li>
-                                                    <li><span class="dropped">Dropped</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <button id="removeShow" class="uk-button uk-button-danger uk-hidden"><i class="uk-icon-remove"></i>Remove from Library</button>
-                                    </div>
-                                <% elsif @authorized && @show_is_in_library %>
-                                    <div>
-                                        <div class="uk-hidden" data-uk-dropdown="{mode: 'click'}">
-                                            <button id="addShow" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>Add to Library</button>
-                                            <div class="uk-dropdown">
-                                                <ul class="status-list">
-                                                    <li><span class="currently_watching">Currently watching</a></li>
-                                                    <li><span class="plan_to_watch">Plan to watch</a></li>
-                                                    <li><span class="completed">Completed</a></li>
-                                                    <li><span class="on_hold">On hold</a></li>
-                                                    <li><span class="dropped">Dropped</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <button id="removeShow" class="uk-button uk-button-danger"><i class="uk-icon-remove"></i>Remove from Library</button>  
-                                    </div>
-                                <% end %>
-                            </div>
+            <section class="uk-width-1-1 content-bg">
+                <div class="uk-width-small-4-5 uk-container-center">
+                    <div class="grounder show-card">
+                        <div class="anime-cover-container">
+                            <img src="<%= @anime['image_url_lge'] %>" width="300" height="300">
                         </div>
-                        <div>
-                           <p><%= @anime['description'] %></p>
-                           <p><%= "Genres: " + @anime['genres'].join(", ") %></p>
+                        <div class="anime-info-wrapper">
+                            <h2 class="anime-title"><%= @anime['title_english'] %></h2>
+                            <div class="anime-star-rating">
+                                <%= "#{(@anime['average_score'] / 10).round} / 10" %>
+                                <i class="uk-icon-star"></i>
+                            </div>
+                            <div>
+                                <span class="anime-type">
+                                    <%= @anime['type'] %>
+                                </span>
+                                <span class="show-status">
+                                    <%= @anime['airing_status'] %>
+                                </span>
+                            </div>
+                            <div>
+                                <span class="total-episodes">
+                                    <%= "#{@anime['total_episodes']} episodes" %>
+                                </span>
+                                <span class="show-duration">
+                                    <%= "#{@anime['duration']} minutes" %>
+                                </span>
+                            </div>
+                            <% if @authorized && !@show_is_in_library %>
+                                <div>
+                                    <div data-uk-dropdown="{mode: 'click'}">
+                                        <button id="addShow" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>Add to Library</button>
+                                        <div class="uk-dropdown">
+                                            <ul class="status-list">
+                                                <li><span class="currently_watching">Currently watching</a></li>
+                                                <li><span class="plan_to_watch">Plan to watch</a></li>
+                                                <li><span class="completed">Completed</a></li>
+                                                <li><span class="on_hold">On hold</a></li>
+                                                <li><span class="dropped">Dropped</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <button id="removeShow" class="uk-button uk-button-danger uk-hidden"><i class="uk-icon-remove"></i>Remove from Library</button>
+                                </div>
+                            <% elsif @authorized && @show_is_in_library %>
+                                <div>
+                                    <div class="uk-hidden" data-uk-dropdown="{mode: 'click'}">
+                                        <button id="addShow" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i>Add to Library</button>
+                                        <div class="uk-dropdown">
+                                            <ul class="status-list">
+                                                <li><span class="currently_watching">Currently watching</a></li>
+                                                <li><span class="plan_to_watch">Plan to watch</a></li>
+                                                <li><span class="completed">Completed</a></li>
+                                                <li><span class="on_hold">On hold</a></li>
+                                                <li><span class="dropped">Dropped</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <button id="removeShow" class="uk-button uk-button-danger"><i class="uk-icon-remove"></i>Remove from Library</button>  
+                                </div>
+                            <% end %>
+                        </div>
+                        <div class="show-details-container">
+                           <p class="show-summary"><%= @anime['description'] %></p>
+                           <p class="show-genres"><%= "Genres: " + @anime['genres'].join(", ") %></p>
                         </div>
                     </div>
                 </div>
