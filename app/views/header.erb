@@ -10,16 +10,16 @@
                         <span>Hello <%= @username %>!</span>
                     </div>
                     <div class="action-buttons-container">
-                        <button class="uk-button library-button"><a href=<%= "/library/user/#{@username}"%>>Library</a></button>
-                        <button class="uk-button sign-out-button"><a href="/logout">Sign Out</a></button>
+                        <span class="uk-button library-button"><a href=<%= "/library/user/#{@username}"%>>Library</a></span>
+                        <span class="uk-button sign-out-button"><a href="/logout">Sign Out</a></span>
                     </div>
                 <% else %>
                     <div class="action-buttons-container">
-                        <button class="uk-button sing-in-button">
+                        <span class="uk-button sing-in-button">
                             <a href="https://anilist.co/api/auth/authorize?grant_type=authorization_code&client_id=stucaldor43-jcqyc&redirect_uri=http%3A%2F%2Fruby-sirius49.c9users.io%3A8081%2Flogin&response_type=code">
                                 Sign In
                             </a>
-                        </button>
+                        </span>
                     </div>
                 <% end %>
             </div>
