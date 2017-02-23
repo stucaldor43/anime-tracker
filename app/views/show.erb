@@ -16,14 +16,47 @@
             .title-search-wrapper {
                 text-align: right;
             }
-            .anime-cover-container img {
-                height: 300px;
-                width: 100%;
+            .uk-container {
+                max-width: 1200px;
+                padding: 0;
             }
-            .grounder {
+            .content-bg {
+                background-color: rgba(219,249,245,.5);
+                min-height: 960px;
+                padding: 64px 0;
+            }
+            .show-card {
                 margin: 0 auto;
                 width: 60%;
                 max-width: 846px;
+                background-color: #FFF;
+                padding: 32px;
+            }
+            @media (orientation: portrait) and (max-width: 480px) {
+                .show-card {
+                    width: 100%;
+                    border: none;
+                    padding: 0;
+                }    
+            }
+            @media (orientation: portrait) and (min-width: 481px) {
+                .show-card {
+                    min-width: 336px;
+                }    
+            }
+            .anime-cover-container img {
+                height: 425px;
+                width: 100%;
+            }
+            .anime-info-wrapper {
+                padding-left: 4px;
+            }
+            .anime-title {
+                margin: 8px 0;
+            }
+            .show-details-container {
+                margin-top: 8px;
+                padding-left: 4px;
             }
             [data-uk-dropdown] {
                 position: relative;
