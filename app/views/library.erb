@@ -199,15 +199,8 @@
                         <span class="episodes-watched"><i class="uk-icon-eye"></i>{{ item.episodesWatched}}</span>    
                     </div>
                 </div>
-                <div class="top-card" v-else>
-                    
-                </div>
-                <div class="card-image-container" v-if="canModifyLibrary">
+                <div class="card-image-container">
                     <img :src="item.coverImage" :data-original="item.coverImage" width="470" height="710" />
-                </div>
-                <div class="card-image-container" v-else>
-                    <img :src="item.coverImage" :data-original="item.coverImage" width="470" height="710" />
-                    <div class="community-rating">{{ Math.floor(item.rating) }}</div>
                 </div>
                 <div class="bottom-card uk-clearfix" v-if="canModifyLibrary">
                     <div class="show-info-container">
@@ -233,11 +226,13 @@
                         <span><i class="uk-icon-star">{{ Math.floor(item.rating)  }}</i></span>
                     </div>
                 </div>
-                <div class="bottom-card" v-else>
-                    <div class="uk-width-medium-6-10">
+                <div class="bottom-card uk-clearfix" v-else>
+                    <div class="show-info-container">
                         <div class="status-tag">{{ item.status }}</div>
                         <div class="show-title"><a href="/show/{{ item.id }}">{{ item.title }}</a></div>
-                        <div class="episodes-watched">{{ item.episodesWatched}} episodes viewed</div>
+                    </div>
+                    <div class="community-rating">
+                        <span><i class="uk-icon-star">{{ Math.floor(item.rating)  }}</i></span>
                     </div>
                </div>
             </div>
