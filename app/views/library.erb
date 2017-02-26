@@ -8,29 +8,105 @@
 	    <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
         <script type="text/javascript" src="/js/uikit.js"></script>
         <script type="text/javascript" src="/js/components/notify.js"></script>
+        <script type="text/javascript" src="/js/bindings.js" defer></script>
         <style>
             * {
                 box-sizing: border-box;
             }
             
-            .shelf-wrapper {
-                height: 500px;
-                overflow: auto ;
+            .pad-right-8 {
+                padding-right: 8px;   
             }
             
             .shelf-item {
                 display: inline-block;
                 vertical-align: top;
+                margin-bottom: 8px;
+            }
+            
+            .card > div{
+                /*border: 1px solid #e2e2e2;    */
+            }
+            
+            .top-card {
+                padding: 0 16px;
+                border-left: medium solid #e2e2e2;
+                border-right: medium solid #e2e2e2;
+                border-top: medium solid #e2e2e2;
+                border-radius: 0 0 4px 4px;
+            }
+            
+            .episodes-watched-container {
+                float: left;
+            }
+            
+            .watch-tally-container {
+                float: right;
             }
             
             .shelf img {
                 min-width: 25%;
-                min-height: 200px;
+                height: 319px;
                 display: inline-block;
             }
             
             img:not([src]) {
                 visibility: hidden;
+            }
+            
+            .bottom-card {
+                padding: 0 16px;
+                border-left: medium solid #e2e2e2;
+                border-right: medium solid #e2e2e2;
+                border-bottom: medium solid #e2e2e2;
+                border-radius: 0 0 4px 4px;
+            }
+            
+            .show-info-container {
+                border-bottom: 1px solid #e2e2e2;
+            }
+            
+            .status-tag {
+                margin-bottom: 24px;    
+            }
+            
+            .voting-button-container {
+                text-align: right;
+                border-bottom: 1px solid #e2e2e2;
+            }
+            
+            .thumb {
+                color: #aab8c2;
+                background-color: transparent;
+            }
+            
+            .status-dropdown-container {
+                float: right;    
+            }
+            
+            .dropdown-trigger-button {
+                color: #000;
+                background-color: transparent;
+            }
+            
+            .community-rating {
+                float: left;
+                padding-top: 4px;
+            }
+            
+            .spacer {
+                text-align: center;
+                margin-top: 32px;
+            }
+            
+            .load-entries-button {
+                width: 100%;
+                font-size: 1.1em;
+                padding: 8px 0;
+            }
+            
+            .uk-icon-plus-circle {
+                padding-right: 2px;
             }
             
             /* Fixes Firefox anomaly */
@@ -42,102 +118,119 @@
         </style>
     </head>
     <body id="body">
+        <div class="uk-container uk-container-center">
         <%= @header %>
+        <%= @title_search_partial%>
         <section>
-           <ul class="uk-tab" data-uk-tab="{connect: '#tab-contents', animation: 'slide-horizontal'}">
-               <li class="uk-active"><a href="">Library</a></li>
-               <li><a href="">Activity Feed</a></li>
-           </ul>
-           <ul id="tab-contents" class="uk-switcher">
-               <li id="library-manager">
-                   <div>
-                       <input type="search" v-model.trim="searchTerm" @keyup.enter="displaySearchResults">
-                   </div>
-                   <div>
-                       <ul>
-                          <li>
-                            <label for="watching"><input @change="handleFilterToggle" id="watching" name="filter" type="checkbox" value="watching">Watching</label>
-                          </li>
-                          <li>
-                            <label for="on_hold"><input @change="handleFilterToggle" id="on_hold" name="filter" type="checkbox" value="on-hold">On hold</label>
-                          </li>
-                          <li>
-                            <label for="plan_to_watch"><input @change="handleFilterToggle" id="plan_to_watch" name="filter" type="checkbox" value="plan to watch">Plan to watch</label>
-                          </li>
-                          <li>
-                            <label for="completed"><input @change="handleFilterToggle" id="completed" name="filter" type="checkbox" value="completed">Completed</label>
-                          </li>
-                          <li>
-                            <label for="dropped"><input @change="handleFilterToggle" id="dropped" name="filter" type="checkbox" value="dropped">Dropped</label>
-                          </li>
-                       </ul>
-                   </div>
-                   <div class="shelf-wrapper" @scroll="scrollHandler">
-                       <div class="shelf">
-                           <div class="uk-width-small-1-2 uk-width-large-1-4 shelf-item" v-for="animeItem in visibleLibraryEntries">
-                               <library-entry :item="animeItem" :can-modify-library="isViewingOwnPage"></library-entry>
-                           </div>
-                       </div>
-                   </div>
-               </li>
-               <li id="activity-feed">
-                   <div v-for="item in feed">
+            <div class="uk-width-small-4-5 uk-container-center">
+                <ul class="uk-tab" data-uk-tab="{connect: '#tab-contents', animation: 'slide-horizontal'}">
+                   <li class="uk-active"><a href="">Library</a></li>
+                   <li><a href="">Activity Feed</a></li>
+                </ul>
+                <ul id="tab-contents" class="uk-switcher">
+                   <li id="library-manager">
                        <div>
-                           <p v-show="item.status === 'watched episode'">
-                               {{ username }} finished watching episode {{ item.value }} of <a :href="'/show/' + item.id">{{ item.title }}</a>
-                           </p>
-                           <p v-show="item.status === 'plans to watch'">
-                               {{ username }} plans to watch <a :href="'/show/' + item.id">{{ item.title }}</a>
-                           </p>
-                           <p v-show="item.status === 'completed'">
-                               {{ username }} completed <a :href="'/show/' + item.id">{{ item.title }}</a>
-                           </p>
-                           <p v-show="item.status === 'paused watching'">
-                               {{ username }} has put <a :href="'/show/' + item.id">{{ item.title }}</a> on hold
-                           </p>
-                           <p v-show="item.status === 'dropped'">
-                               {{ username }} has dropped <a :href="'/show/' + item.id">{{ item.title }}</a>
-                           </p>
+                           <input type="search" v-model.trim="searchTerm" @keyup.enter="displaySearchResults">
                        </div>
-                    </div>
-               </li>
-            </ul>
+                       <div>
+                           <ul>
+                              <li>
+                                <label for="watching"><input @change="handleFilterToggle" id="watching" name="filter" type="checkbox" value="watching">Watching</label>
+                              </li>
+                              <li>
+                                <label for="on_hold"><input @change="handleFilterToggle" id="on_hold" name="filter" type="checkbox" value="on-hold">On hold</label>
+                              </li>
+                              <li>
+                                <label for="plan_to_watch"><input @change="handleFilterToggle" id="plan_to_watch" name="filter" type="checkbox" value="plan to watch">Plan to watch</label>
+                              </li>
+                              <li>
+                                <label for="completed"><input @change="handleFilterToggle" id="completed" name="filter" type="checkbox" value="completed">Completed</label>
+                              </li>
+                              <li>
+                                <label for="dropped"><input @change="handleFilterToggle" id="dropped" name="filter" type="checkbox" value="dropped">Dropped</label>
+                              </li>
+                           </ul>
+                       </div>
+                       <div class="shelf-wrapper">
+                            <div class="shelf">
+                               <div class="uk-width-small-1-2 uk-width-large-1-4 shelf-item" v-for="animeItem in visibleLibraryEntries">
+                                   <library-entry :item="animeItem" :can-modify-library="isViewingOwnPage"></library-entry>
+                               </div>
+                            </div>
+                            <div class="spacer">
+                                <button class="uk-button load-entries-button" @click="loadMoreEntries"><i class="uk-icon-plus-circle"></i>Show More</button>
+                            </div>
+                       </div>
+                   </li>
+                   <li id="activity-feed">
+                       <div v-for="item in feed">
+                           <div>
+                               <p v-show="item.status === 'watched episode'">
+                                   {{ username }} finished watching episode {{ item.value }} of <a :href="'/show/' + item.id">{{ item.title }}</a>
+                               </p>
+                               <p v-show="item.status === 'plans to watch'">
+                                   {{ username }} plans to watch <a :href="'/show/' + item.id">{{ item.title }}</a>
+                               </p>
+                               <p v-show="item.status === 'completed'">
+                                   {{ username }} completed <a :href="'/show/' + item.id">{{ item.title }}</a>
+                               </p>
+                               <p v-show="item.status === 'paused watching'">
+                                   {{ username }} has put <a :href="'/show/' + item.id">{{ item.title }}</a> on hold
+                               </p>
+                               <p v-show="item.status === 'dropped'">
+                                   {{ username }} has dropped <a :href="'/show/' + item.id">{{ item.title }}</a>
+                               </p>
+                           </div>
+                        </div>
+                   </li>
+                </ul>
+            </div>
         </section>
         <%= @footer %>
+        </div>
         <template type="text/x-template" id="record">
-            <div>
-                <div class="top-card" v-if="canModifyLibrary">
-                    <img :src="item.coverImage" :data-original="item.coverImage" width="470" height="710" />
-                    <button @click="incrementEpisodesWatched"><i class="uk-icon-arrow-up" title="increase episodes watched"></i></button>
-                    <button @click="decrementEpisodesWatched"><i class="uk-icon-arrow-down" title="decrease episodes watched"></i></button>
-                    <div class="community-rating">{{ Math.floor(item.rating)  }}</div>
+            <div class="card pad-right-8">
+                <div class="top-card uk-clearfix" v-if="canModifyLibrary">
+                    <div class="episodes-watched-container">
+                        <button class="" @click="incrementEpisodesWatched"><i class="uk-icon-arrow-up" title="increase episodes watched"></i></button>
+                        <button class="" @click="decrementEpisodesWatched"><i class="uk-icon-arrow-down" title="decrease episodes watched"></i></button>
+                    </div>
+                    <div class="watch-tally-container">
+                        <span class="episodes-watched"><i class="uk-icon-eye"></i>{{ item.episodesWatched}}</span>    
+                    </div>
                 </div>
                 <div class="top-card" v-else>
+                    
+                </div>
+                <div class="card-image-container" v-if="canModifyLibrary">
+                    <img :src="item.coverImage" :data-original="item.coverImage" width="470" height="710" />
+                </div>
+                <div class="card-image-container" v-else>
                     <img :src="item.coverImage" :data-original="item.coverImage" width="470" height="710" />
                     <div class="community-rating">{{ Math.floor(item.rating) }}</div>
                 </div>
-                <div class="bottom-card" v-if="canModifyLibrary">
-                    <div class="uk-width-medium-6-10">
+                <div class="bottom-card uk-clearfix" v-if="canModifyLibrary">
+                    <div class="show-info-container">
                         <div class="status-tag">{{ item.status }}</div>
                         <div class="show-title"><a href="/show/{{ item.id }}">{{ item.title }}</a></div>
-                        <div class="episodes-watched">{{ item.episodesWatched}} episodes viewed</div>
                     </div>
-                    <div class="uk-width-medium-4-10">
-                        <div>
-                            <button class="uk-button" @click="ratePositive"><i class="uk-icon-thumbs-up" title="like"></i></button>
-                            <button class="uk-button" @click="rateNeutral"><i class="uk-icon-thumbs-up" title="neutral"></i></button>
-                            <button class="uk-button" @click="rateNegative"><i class="uk-icon-thumbs-down" title="dislike"></i></button>
-                            <div style="position: relative" data-uk-dropdown="{mode: 'click'}">
-                                <button class="uk-button">Add To</button>
-                                <ul class="uk-dropdown entry-status" @click="hideDropdown">
-                                    <li class="status-item" @click="updateStatus('watching')">Currently watching</li>
-                                    <li class="status-item" @click="updateStatus('plan to watch')">Plan to watch</li>
-                                    <li class="status-item" @click="updateStatus('completed')">Completed</li>
-                                    <li class="status-item" @click="updateStatus('on-hold')">On hold</li>
-                                    <li class="status-item" @click="updateStatus('dropped')">Dropped</li>
-                                </ul>
-                            </div>
-                        </div>
+                    <div class="voting-button-container">
+                        <button class="uk-button thumb thumb-up" @click="ratePositive"><i class="uk-icon-thumbs-up" title="like"></i></button>
+                        <button class="uk-button thumb thumb-neutral" @click="rateNeutral"><i class="uk-icon-thumbs-up" title="neutral"></i></button>
+                        <button class="uk-button thumb thumb-down" @click="rateNegative"><i class="uk-icon-thumbs-down" title="dislike"></i></button>
+                    </div>
+                    <div class="status-dropdown-container" style="position: relative" data-uk-dropdown="{mode: 'click'}">
+                        <button class="uk-button dropdown-trigger-button">Change Status<i class="uk-icon-angle-down"></i></button>
+                        <ul class="uk-dropdown entry-status" @click="hideDropdown">
+                            <li class="status-item" @click="updateStatus('watching')">Currently watching</li>
+                            <li class="status-item" @click="updateStatus('plan to watch')">Plan to watch</li>
+                            <li class="status-item" @click="updateStatus('completed')">Completed</li>
+                            <li class="status-item" @click="updateStatus('on-hold')">On hold</li>
+                            <li class="status-item" @click="updateStatus('dropped')">Dropped</li>
+                        </ul>
+                    </div>
+                    <div class="community-rating">
+                        <span><i class="uk-icon-star">{{ Math.floor(item.rating)  }}</i></span>
                     </div>
                 </div>
                 <div class="bottom-card" v-else>

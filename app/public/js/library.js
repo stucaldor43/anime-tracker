@@ -163,7 +163,12 @@
     			var endpoint = "/api/user/" + this.username + "/library";
     			var libraryData = [];
     			var promise = this.$http.get(endpoint).then(function(response) {
-    				var userLibrary = JSON.parse(response.body).data;
+    			    var parsedResponse = JSON.parse(response.body);
+    			    if (parsedResponse.status === "fail") {
+    			        throw new Error(parsedResponse.data[0].status);
+    			        return;
+    			    }
+    				var userLibrary = parsedResponse.data;
     				["completed", "dropped", "on_hold", "plan_to_watch", "watching"].forEach(function(status) {
     					libraryData.push.apply(libraryData, userLibrary.lists[status]);
     				});
@@ -253,11 +258,8 @@
     			});
     		},
     		displaySearchResults: function() {},
-    		scrollHandler: function() {
-    			var el = document.querySelector(".shelf-wrapper");
-    			if (el.scrollTop + el.offsetHeight >= el.scrollHeight - Math.floor(.80 * el.scrollHeight)) {
-    				this.revealMoreEntries();
-    			}
+    		loadMoreEntries: function() {
+    			this.revealMoreEntries();
     		},
     		setIsViewingOwnPage: function() {
     			this.$http.get("/api/authorized/" + this.username).then(function(response) {
