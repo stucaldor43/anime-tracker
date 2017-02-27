@@ -8,5 +8,5 @@ get '/search/anime/genres' do
   @header = erb :header
   @footer = erb :footer
   
-  erb :genre_search
+  erb :search
 end
