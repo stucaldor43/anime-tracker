@@ -159,6 +159,14 @@
     		isViewingOwnPage: false
     	},
     	methods: {
+    	    smartToggleMoreEntriesButtonVisibility: function() {
+    	        var moreEntriesButton = document.querySelector(".load-entries-button");
+    	        if (this.visibleLibraryEntries.length !== this.allLibraryEntries.length) {
+    	            moreEntriesButton.style.display = "inline";
+    	            return;
+    	        }
+    	        moreEntriesButton.style.display = "none";
+    	    },
     		fetchLibraryEntries: function() {
     			var endpoint = "/api/user/" + this.username + "/library";
     			var libraryData = [];
@@ -188,6 +196,9 @@
     					postFetchVisibleLibraryEntries: []
     				});
     				return libraryEntries;
+    			}.bind(this))
+    			.then(function() {
+    			    this.smartToggleMoreEntriesButtonVisibility();
     			}.bind(this));
     			return promise;
     		},
@@ -256,6 +267,7 @@
     				type: REVEAL,
     				revealedEntries: entries
     			});
+    			this.smartToggleMoreEntriesButtonVisibility();
     		},
     		displaySearchResults: function() {},
     		loadMoreEntries: function() {
