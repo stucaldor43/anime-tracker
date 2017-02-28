@@ -8,12 +8,17 @@ configure do
                            :secret => 'Wz6TaGAYS2bnTqAdhXv3Ze67'
 end
 
-Dir.glob(['controllers/*.rb', 'api/*.rb']).each do |file|
-  load file
+# required to ensure that not found page is only rendered if no other route matches the request url
+route_filenames = Dir.glob(['controllers/*.rb', 'api/*.rb']).reduce([]) do |queue,filename|
+  (filename.index('not_found')) ?  queue.push(filename) : queue.unshift(filename)
 end
 
-Dir.glob('helpers/*.rb').each do |file|
-  load file 
+route_filenames.each do |filename|
+  load filename
+end
+
+Dir.glob('helpers/*.rb').each do |filename|
+  load filename
 end
 
 # allows multiple view directories to be set
