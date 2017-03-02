@@ -196,8 +196,8 @@
     					postFetchVisibleLibraryEntries: []
     				});
     				return libraryEntries;
-    			}.bind(this))
-    			.then(function() {
+    			}.bind(this));
+    			promise.then(function() {
     			    this.smartToggleMoreEntriesButtonVisibility();
     			}.bind(this));
     			return promise;
@@ -269,7 +269,6 @@
     			});
     			this.smartToggleMoreEntriesButtonVisibility();
     		},
-    		displaySearchResults: function() {},
     		loadMoreEntries: function() {
     			this.revealMoreEntries();
     		},
