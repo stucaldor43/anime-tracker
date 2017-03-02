@@ -38,13 +38,12 @@
     
     function sendUserToSearchResultsPage(e) {
         var searchButton = document.getElementById("search-btn");
+        var searchInput = document.getElementById("search-input");
         
-        if (e.target !== searchButton && e.keyCode !== 13) {
-            return;
+        if ((e.target === searchInput && e.keyCode === 13) ||
+        e.target === searchButton) {
+            window.location.assign("/search/anime/" + encodeURI(searchInput.value)); 
         }
-        
-        var searchTerm = document.getElementById("search-input").value;
-        window.location.assign("/search/anime/" + encodeURI(searchTerm)); 
     }
     
     function retrieveAllAncestors(node) {
