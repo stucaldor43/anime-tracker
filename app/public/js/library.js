@@ -223,19 +223,46 @@
     					break;
     				}
     			}
+    			
     			var filterIsActive = (selectedCheckBox) ? true : false;
     			if (!filterIsActive) {
     				this.fetchLibraryEntries().then(this.revealMoreEntries);
     				return;
     			}
-    			var postFilterLibraryEntries = this.allLibraryEntries.filter(function(entry) {
-    				return entry.status === selectedCheckBox.value;
-    			}.bind(this));
+    			
+    			var sortedLibraryEntries = this.allLibraryEntries.sort(function(a, b) {
+    			    if (a.status === selectedCheckBox.value &&
+    			    b.status === selectedCheckBox.value) {
+    			        return -1;
+    			    }
+    			    else if (a.status === selectedCheckBox.value &&
+    			    b.status !== selectedCheckBox.value) {
+    			        return -1;
+    			    }
+    			    else if (a.status !== selectedCheckBox.value &&
+    			    b.status === selectedCheckBox.value) {
+    			        return 1;
+    			    }
+    			    else if (a.status !== selectedCheckBox.value &&
+    			    b.status !== selectedCheckBox.value) {
+    			        return 0;
+    			    }
+    			});
+    			
+    			var postFilterLibraryEntries = [];
+    			for (var i = 0; i < sortedLibraryEntries.length; i++) {
+    			    if (sortedLibraryEntries[i].status !== selectedCheckBox.value) {
+    			        break;
+    			    }
+    			    postFilterLibraryEntries.push(sortedLibraryEntries[i]);
+    			}
+    			
     			mutateVueInstanceData(this, {
     				type: FILTER,
     				postFilterLibraryEntries: postFilterLibraryEntries,
     				visibleLibraryEntries: []
     			});
+    			
     			this.revealMoreEntries();
     		},
     		updateAnimeStatus: function(id, status) {
