@@ -119,6 +119,7 @@
     var FETCH_ALL = "fetch";
     var REVEAL = "reveal";
     var UPDATE_STATUS = "update";
+    var REMOVE_ENTRY = "remove";
     
     function reducer(state, action) {
     	switch (action.type) {
@@ -138,6 +139,11 @@
     		case FILTER:
     			return Object.assign({}, state, {
     				allLibraryEntries: action.postFilterLibraryEntries,
+    				visibleLibraryEntries: action.visibleLibraryEntries
+    			});
+    		case REMOVE_ENTRY:
+    			return Object.assign({}, state, {
+    				allLibraryEntries: action.postRemovalLibraryEntries,
     				visibleLibraryEntries: action.visibleLibraryEntries
     			});
     		default:
@@ -277,6 +283,17 @@
     				postUpdateLibraryEntries: postUpdateLibraryContents
     			});
     		},
+    		removeLibraryEntry: function(showId) {
+    		    mutateVueInstanceData(this, {
+    				type: REMOVE_ENTRY,
+    				postRemovalLibraryEntries: this.allLibraryEntries.filter(function(entry) {
+    				    return entry.id !== showId;
+    				}),
+    				visibleLibraryEntries: this.visibleLibraryEntries.filter(function(entry) {
+    				    return entry.id !== showId;
+    				}) 
+    			});
+    		},
     		revealMoreEntries: function() {
     			var entries;
     			if (this.visibleLibraryEntries.length < this.allLibraryEntries.length) {
@@ -314,6 +331,8 @@
     library.$on("statusUpdated", function(id, status) {
     	this.updateAnimeStatus(id, status);
     });
-    
+    library.$on("entryRemoved", function(showId) {
+        this.removeLibraryEntry(showId);
+    });
     var myLazyLoad = new LazyLoad();
 })();

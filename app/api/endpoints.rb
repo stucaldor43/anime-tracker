@@ -176,8 +176,15 @@ get '/api/library/:id' do
   updated_data = {
     'list_status' => params['status']
   }
-  request_data = create_animelist_put_data(animelist_entry, updated_data)
   
+  if animelist_entry
+    request_data = create_animelist_put_data(animelist_entry, updated_data)
+  else
+    request_data = {
+      'id' => show_id.to_s,
+      'list_status' => URI::decode(params['status'])
+    }
+  end
   res = make_anilist_put_request('/animelist', request_data)
   
   case res

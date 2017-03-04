@@ -225,6 +225,9 @@
                     <div class="community-rating">
                         <span><i class="uk-icon-star">{{ Math.floor(item.rating)  }}</i></span>
                     </div>
+                    <div class="entry-removal-controls">
+                        <button class="uk-button remove-entry" @click="removeFromLibrary"><i class="uk-icon-trash">Remove</i></button>
+                    </div>
                 </div>
                 <div class="bottom-card uk-clearfix" v-else>
                     <div class="show-info-container">
@@ -234,7 +237,7 @@
                     <div class="community-rating">
                         <span><i class="uk-icon-star">{{ Math.floor(item.rating)  }}</i></span>
                     </div>
-               </div>
+                </div>
             </div>
         </template>
         <script type="text/javascript" src="/js/vue-1.0.26.js"></script>
