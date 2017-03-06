@@ -176,10 +176,10 @@
                             </div>
                             <div class="pagination-controls">
                                 <% if @is_previous_button_visible %>
-                                  <span class="previous"><a href=<%= "/search/anime/genres?genre%5B%5D=#{ @search_phrase }&page=#{ @pageNumber - 1 }"%>><i class="uk-icon-arrow-left"></i>Previous</a></span>
+                                  <span class="previous"><a href=<%= "/search/anime/genres?#{ @search_phrase.split(", ").map {|genre| "genre%5B%5D=#{genre}"}.join("&") }&page=#{ @pageNumber - 1 }"%>><i class="uk-icon-arrow-left"></i>Previous</a></span>
                                 <% end %>
                                 <% if @is_next_button_visible %>
-                                  <span class="next"><a href=<%= "/search/anime/genres?genre%5B%5D=#{ @search_phrase }&page=#{ @pageNumber + 1 }"%>><i class="uk-icon-arrow-right"></i>Next</a></span>
+                                  <span class="next"><a href=<%= "/search/anime/genres?#{ @search_phrase.split(", ").map {|genre| "genre%5B%5D=#{genre}"}.join("&") }&page=#{ @pageNumber + 1 }"%>><i class="uk-icon-arrow-right"></i>Next</a></span>
                                 <% end %>
                             </div>
                         </div>
