@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title><%= "#{@search_phrase} Search - Anime Tracker" %></title>
         <meta charset="utf-8">
@@ -172,7 +172,7 @@
             }
             
             .pagination-controls a:hover {
-                color: #d8b573;;
+                color: #d8b573;
             }
             
             .previous, .next {
@@ -207,7 +207,7 @@
             <section class="uk-grid uk-width-1-1 main">
                 <div class="uk-width-small-4-5 uk-container-center center">
                     <% if Array === @search_results %>
-                        <h1 class="main-section-heading">Results For: <%= @search_phrase %></h1>
+                        <h2 class="main-section-heading">Results For: <%= @search_phrase %></h2>
                         <div class="wrapper uk-width-1-1">
                             <div class="result-wrapper uk-grid card-holder">
                                 <% @search_results.each do |result| %>
