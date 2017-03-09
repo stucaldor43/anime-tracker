@@ -1,4 +1,5 @@
 get '/login' do
+  @title_search_partial = erb :anime_title_search_partial
   @header = erb :header
   @footer = erb :footer
   login(params['code']) if params['code'] && !session['access_token']
