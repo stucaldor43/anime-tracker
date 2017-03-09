@@ -2,6 +2,7 @@
     <head>
         <title>Login - Anime Tracker</title>
         <meta charset="utf-8">
+        <link href="https://fonts.googleapis.com/css?family=Noto+Serif|Open+Sans" rel="stylesheet">
         <link rel="stylesheet" href="/css/uikit.css">
         <link rel="stylesheet" href="/css/partials/header.css">
         <link rel="stylesheet" href="/css/partials/anime_title_search.css">
@@ -13,30 +14,24 @@
                 box-sizing: border-box;
             }
             
-            .uk-container {
+            .container {
                 max-width: 1200px;
                 padding: 0;
-            }
-            
-            section {
-                text-align: center;
             }
             
             .content {
                 padding-top: 64px;
                 min-height: 500px;
                 background-color: rgba(219,249,245,.5);
+                text-align: center;
             }
             
-            form {
+            .login {
                 position: relative;
                 max-width: 500px;
                 margin: 0 auto;
                 padding: 32px 0;
-            }
-            
-            .uk-form legend:after {
-                border: 0 none transparent;
+                font-family: "Open Sans", sans-serif;
             }
             
             .sign-in-button {
@@ -47,6 +42,11 @@
                 color: #FFF;
                 border-radius: 3px;
                 text-transform: uppercase;
+                transition: border 0.3s ease-out;
+            }
+            
+            .sign-in-button:hover {
+                border: thin dashed #d8b573;
             }
             
             input[type="submit"] {
@@ -54,21 +54,22 @@
             }
         </style>
     </head>
-    <body id="body">
-       <div class="uk-container uk-container-center">    
+    <body id="body" class="login-page">
+       <div class="uk-container uk-container-center container">    
            <%= @header %>
+           <%= @title_search_partial %>
            <section class="uk-width-1-1 content">
-               <div class="uk-width-small-4-5 uk-container-center">
-                   <form class="uk-form" method="post" action="/login">
-                       <fieldset>
-                           <legend>User Login</legend>
-                           <div class="uk-form-row">
+               <div class="uk-width-small-4-5 uk-container-center login-wrapper">
+                   <div class="login">
+                       <div>
+                           <h2>User Login</h2>
+                           <div>
                              <a class="uk-button sign-in-button" href="https://anilist.co/api/auth/authorize?grant_type=authorization_code&client_id=stucaldor43-jcqyc&redirect_uri=http%3A%2F%2Fruby-sirius49.c9users.io%3A8081%2Flogin&response_type=code">
                                Sign in using Anilist
                              </a>
                            </div>
-                       </fieldset>
-                   </form>
+                       </div>
+                   </div>
                </div>
            </section>
            <%= @footer %>
