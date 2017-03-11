@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Error - AnimeTracker</title>
+        <meta charset="utf-8">
+        <link href="https://fonts.googleapis.com/css?family=Noto+Serif|Open+Sans" rel="stylesheet">
+        <link rel="stylesheet" href="/css/uikit.css">
+        <link rel="stylesheet" href="/css/partials/header.css">
+        <link rel="stylesheet" href="/css/partials/anime_title_search.css">
+        <script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
+        <script type="text/javascript" src="/js/uikit.js"></script>
+        <script type="text/javascript" src="/js/bindings.js" defer></script>
+        <style>
+            /*=======================================
+                            General
+            =======================================*/
+            .main {
+                padding-top: 1.6em;
+                min-height: 700px;
+                background-color: #f4f4f4;
+                text-align: center;
+                font-family: "Open Sans", sans-serif;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            /*=====================================
+                            Error
+            =====================================*/
+            .error-type {
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body id="body">
+        <div class="uk-container uk-container-center container">
+            <%= @header %>
+            <%= @site_search_partial %>
+            <div class="main">
+              <div class="uk-width-small-4-5 uk-container-center">
+                <div class="error">
+                    <h2 class="error-type"><%= @error %></h1>
+                    <p class="error-message"><%= @message %></p>
+                </div>
+              </div>
+            </div>
+            <%= @footer %>
+        </div>
+    </body>
+</html>

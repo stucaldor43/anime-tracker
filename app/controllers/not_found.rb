@@ -1,7 +1,10 @@
 get '/*' do
-  @title_search_partial = erb :anime_title_search_partial
+  @error = '404: Page Not Found'
+  @message = 'Sorry, we could not find the requested page'
+  @site_search_partial = erb :anime_title_search_partial
   @header = erb :header
   @footer = erb :footer
   
-  erb :client_error
+  status 404
+  erb :error
 end
