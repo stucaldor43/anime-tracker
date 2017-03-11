@@ -44,7 +44,11 @@
        template: "#record",
        props: ["item", "canModifyLibrary"],
        data: function() {
-         return {};
+         return {
+             styleObject: {
+                 backgroundImage: 'url(' + this.item.coverImage + ')'
+             }
+         };
        },
        methods: {
            incrementEpisodesWatched: function() {
@@ -334,5 +338,4 @@
     library.$on("entryRemoved", function(showId) {
         this.removeLibraryEntry(showId);
     });
-    var myLazyLoad = new LazyLoad();
 })();

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title><%= "#{@library_owner}'s Library - Anime Tracker" %></title>
         <meta charset="utf-8">
+        <link href="https://fonts.googleapis.com/css?family=Noto+Serif|Open+Sans" rel="stylesheet">
         <link rel="stylesheet" href="/css/uikit.css">
         <link rel="stylesheet" href="/css/components/notify.css">
         <link rel="stylesheet" href="/css/partials/header.css">
@@ -12,30 +13,44 @@
         <script type="text/javascript" src="/js/components/notify.js"></script>
         <script type="text/javascript" src="/js/bindings.js" defer></script>
         <style>
+            /*===================================
+                            General
+            ====================================*/
             * {
                 box-sizing: border-box;
             }
             
-            .pad-right-8 {
+            .container {
+                padding: 0;    
+            }
+            
+            li {
+                list-style: none;    
+            }
+            
+            .main {
+                padding-top: 32px;
+                background-color: #F4F4F4;
+            }
+            
+            /*==========================================
+                                Card 
+            ==========================================*/
+            .card {
+                background-color: #FFF;
+                font-family: "Open Sans", "sans-serif";
+                min-height: 465px;
+                padding-bottom: 16px;
+            }
+            
+            .card-wrapper {
                 padding-right: 8px;   
             }
             
             .shelf-item {
                 display: inline-block;
                 vertical-align: top;
-                margin-bottom: 8px;
-            }
-            
-            .card > div{
-                /*border: 1px solid #e2e2e2;    */
-            }
-            
-            .top-card {
-                padding: 0 16px;
-                border-left: medium solid #e2e2e2;
-                border-right: medium solid #e2e2e2;
-                border-top: medium solid #e2e2e2;
-                border-radius: 0 0 4px 4px;
+                margin-bottom: 32px;
             }
             
             .episodes-watched-container {
@@ -44,12 +59,16 @@
             
             .watch-tally-container {
                 float: right;
+                color: #aab8c2;
             }
             
-            .shelf img {
-                min-width: 25%;
+            .card-image-container {
+                width: 100%;
                 height: 319px;
                 display: inline-block;
+                background-size: 100% 100%;
+                background-repeat: no-repeat;
+                background-position: center center;
             }
             
             img:not([src]) {
@@ -58,10 +77,6 @@
             
             .bottom-card {
                 padding: 0 16px;
-                border-left: medium solid #e2e2e2;
-                border-right: medium solid #e2e2e2;
-                border-bottom: medium solid #e2e2e2;
-                border-radius: 0 0 4px 4px;
             }
             
             .show-info-container {
@@ -69,7 +84,39 @@
             }
             
             .status-tag {
-                margin-bottom: 24px;    
+                margin: 16px 0 24px;
+            }
+            
+            .show-status {
+                padding: 4px 8px;    
+            }
+            
+            .complete {
+                background-color: #d5eced;
+            }
+            
+            .dropped {
+                background-color: #f2d0de;
+            }
+            
+            .on-hold {
+                background-color: #fbe8dd;
+            }
+            
+            .plan-to-watch {
+               background-color: #efe6fe; 
+            }
+            
+            .watching {
+               background-color: #e6fbe8; 
+            }
+            
+            .show-title {
+                font-family: "Noto Serif", serif;    
+            }
+            
+            button.uk-button:hover {
+                background-color: transparent;
             }
             
             .voting-button-container {
@@ -80,6 +127,10 @@
             .thumb {
                 color: #aab8c2;
                 background-color: transparent;
+            }
+            
+            .uk-icon-star:before {
+                padding-right: 2px;    
             }
             
             .status-dropdown-container {
@@ -96,6 +147,34 @@
                 padding-top: 4px;
             }
             
+            .entry-removal-controls {
+                border-top: 1px solid #e2e2e2;
+                border-bottom: 1px solid #e2e2e2;
+            }
+            
+            .remove-entry {
+                color: #aab8c2;
+                background-color: transparent;
+                padding: 0;
+            }
+            
+            .up-episode, .down-episode {
+               color: #aab8c2;
+               background-color: transparent;
+               padding: 0;
+            }
+            
+            .up-episode {
+                margin-right: 4px;    
+            }
+            
+            .uk-icon-eye {
+                padding-right: 2px;    
+            }
+            
+            /*=============================
+                        Loading
+            ==============================*/
             .spacer {
                 text-align: center;
                 margin-top: 32px;
@@ -120,11 +199,11 @@
             }
         </style>
     </head>
-    <body id="body">
-        <div class="uk-container uk-container-center">
+    <body id="body" class="library-page">
+        <div class="uk-container uk-container-center container">
         <%= @header %>
         <%= @title_search_partial%>
-        <section>
+        <div class="main">
             <div class="uk-width-small-4-5 uk-container-center">
                 <ul class="uk-tab" data-uk-tab="{connect: '#tab-contents', animation: 'slide-horizontal'}">
                    <li class="uk-active"><a href="">Library</a></li>
@@ -185,64 +264,99 @@
                    </li>
                 </ul>
             </div>
-        </section>
+        </div>
         <%= @footer %>
         </div>
         <template type="text/x-template" id="record">
-            <div class="card pad-right-8">
-                <div class="top-card uk-clearfix" v-if="canModifyLibrary">
-                    <div class="episodes-watched-container">
-                        <button class="" @click="incrementEpisodesWatched"><i class="uk-icon-arrow-up" title="increase episodes watched"></i></button>
-                        <button class="" @click="decrementEpisodesWatched"><i class="uk-icon-arrow-down" title="decrease episodes watched"></i></button>
+            <div class="card-wrapper">
+                <div class="card">
+                    <div class="card-image-container" v-bind:style="styleObject">
+                    
                     </div>
-                    <div class="watch-tally-container">
-                        <span class="episodes-watched"><i class="uk-icon-eye"></i>{{ item.episodesWatched}}</span>    
+                    <div class="bottom-card uk-clearfix" v-if="canModifyLibrary">
+                        <div class="show-info-container">
+                            <div class="status-tag">
+                                <div v-if="item.status === 'completed'">
+                                    <span class="show-status complete">{{ item.status }}</span>
+                                </div>
+                                <div v-if="item.status === 'dropped'">
+                                    <span class="show-status dropped">{{ item.status }}</span>
+                                </div>
+                                <div v-if="item.status === 'on-hold'">
+                                    <span class="show-status on-hold">{{ item.status }}</span>
+                                </div>
+                                <div v-if="item.status === 'plan to watch'">
+                                    <span class="show-status plan-to-watch">{{ item.status }}</span>
+                                </div>
+                                <div v-if="item.status === 'watching'">
+                                    <span class="show-status watching">{{ item.status }}</span>
+                                </div>
+                            </div>
+                            <div class="show-title"><a href="/show/{{ item.id }}">{{ item.title }}</a></div>
+                        </div>
+                        <div class="voting-button-container">
+                            <button class="uk-button thumb thumb-up" @click="ratePositive"><i class="uk-icon-thumbs-up" title="like"></i></button>
+                            <button class="uk-button thumb thumb-neutral" @click="rateNeutral"><i class="uk-icon-thumbs-up" title="neutral"></i></button>
+                            <button class="uk-button thumb thumb-down" @click="rateNegative"><i class="uk-icon-thumbs-down" title="dislike"></i></button>
+                        </div>
+                        <div class="uk-clearfix">
+                            <div class="community-rating">
+                                <span><i class="uk-icon-star">{{ Math.floor(item.rating)  }}</i></span>
+                            </div>
+                            <div class="status-dropdown-container" style="position: relative" data-uk-dropdown="{mode: 'click'}">
+                                <button class="uk-button dropdown-trigger-button">Change Status<i class="uk-icon-angle-down"></i></button>
+                                <ul class="uk-dropdown entry-status" @click="hideDropdown">
+                                    <li class="status-item" @click="updateStatus('watching')">Currently watching</li>
+                                    <li class="status-item" @click="updateStatus('plan to watch')">Plan to watch</li>
+                                    <li class="status-item" @click="updateStatus('completed')">Completed</li>
+                                    <li class="status-item" @click="updateStatus('on-hold')">On hold</li>
+                                    <li class="status-item" @click="updateStatus('dropped')">Dropped</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="entry-removal-controls">
+                            <button class="uk-button remove-entry" @click="removeFromLibrary"><i class="uk-icon-trash">Remove</i></button>
+                        </div>
+                        <div class="uk-clearfix">
+                            <div class="episodes-watched-container">
+                                <button class="uk-button up-episode" @click="incrementEpisodesWatched"><i class="uk-icon-arrow-up" title="increase episodes watched"></i></button>
+                                <button class="uk-button down-episode" @click="decrementEpisodesWatched"><i class="uk-icon-arrow-down" title="decrease episodes watched"></i></button>
+                            </div>
+                            <div class="watch-tally-container">
+                                <span class="episodes-watched"><i class="uk-icon-eye"></i>{{ item.episodesWatched}}</span>    
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="card-image-container">
-                    <img :src="item.coverImage" :data-original="item.coverImage" width="470" height="710" />
-                </div>
-                <div class="bottom-card uk-clearfix" v-if="canModifyLibrary">
-                    <div class="show-info-container">
-                        <div class="status-tag">{{ item.status }}</div>
-                        <div class="show-title"><a href="/show/{{ item.id }}">{{ item.title }}</a></div>
-                    </div>
-                    <div class="voting-button-container">
-                        <button class="uk-button thumb thumb-up" @click="ratePositive"><i class="uk-icon-thumbs-up" title="like"></i></button>
-                        <button class="uk-button thumb thumb-neutral" @click="rateNeutral"><i class="uk-icon-thumbs-up" title="neutral"></i></button>
-                        <button class="uk-button thumb thumb-down" @click="rateNegative"><i class="uk-icon-thumbs-down" title="dislike"></i></button>
-                    </div>
-                    <div class="status-dropdown-container" style="position: relative" data-uk-dropdown="{mode: 'click'}">
-                        <button class="uk-button dropdown-trigger-button">Change Status<i class="uk-icon-angle-down"></i></button>
-                        <ul class="uk-dropdown entry-status" @click="hideDropdown">
-                            <li class="status-item" @click="updateStatus('watching')">Currently watching</li>
-                            <li class="status-item" @click="updateStatus('plan to watch')">Plan to watch</li>
-                            <li class="status-item" @click="updateStatus('completed')">Completed</li>
-                            <li class="status-item" @click="updateStatus('on-hold')">On hold</li>
-                            <li class="status-item" @click="updateStatus('dropped')">Dropped</li>
-                        </ul>
-                    </div>
-                    <div class="community-rating">
-                        <span><i class="uk-icon-star">{{ Math.floor(item.rating)  }}</i></span>
-                    </div>
-                    <div class="entry-removal-controls">
-                        <button class="uk-button remove-entry" @click="removeFromLibrary"><i class="uk-icon-trash">Remove</i></button>
-                    </div>
-                </div>
-                <div class="bottom-card uk-clearfix" v-else>
-                    <div class="show-info-container">
-                        <div class="status-tag">{{ item.status }}</div>
-                        <div class="show-title"><a href="/show/{{ item.id }}">{{ item.title }}</a></div>
-                    </div>
-                    <div class="community-rating">
-                        <span><i class="uk-icon-star">{{ Math.floor(item.rating)  }}</i></span>
+                    <div class="bottom-card uk-clearfix" v-else>
+                        <div class="show-info-container">
+                            <div class="status-tag">
+                                <div v-if="item.status === 'completed'">
+                                    <span class="show-status complete">{{ item.status }}</span>
+                                </div>
+                                <div v-if="item.status === 'dropped'">
+                                    <span class="show-status dropped">{{ item.status }}</span>
+                                </div>
+                                <div v-if="item.status === 'on-hold'">
+                                    <span class="show-status on-hold">{{ item.status }}</span>
+                                </div>
+                                <div v-if="item.status === 'plan to watch'">
+                                    <span class="show-status plan-to-watch">{{ item.status }}</span>
+                                </div>
+                                <div v-if="item.status === 'watching'">
+                                    <span class="show-status watching">{{ item.status }}</span>
+                                </div>
+                            </div>
+                            <div class="show-title"><a href="/show/{{ item.id }}">{{ item.title }}</a></div>
+                        </div>
+                        <div class="community-rating">
+                            <span><i class="uk-icon-star">{{ Math.floor(item.rating)  }}</i></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </template>
         <script type="text/javascript" src="/js/vue-1.0.26.js"></script>
         <script type="text/javascript" src="/js/vue-resource-1.0.0.js"></script>
-        <script type="text/javascript" src="/js/lazyload.min.js"></script>
         <script type="text/javascript" src="/js/library.js" defer></script>
     </body>
 </html>
