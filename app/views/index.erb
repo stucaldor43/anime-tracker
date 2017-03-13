@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>Anime Tracker</title>
         <meta charset="utf-8">
+        <link href="https://fonts.googleapis.com/css?family=Noto+Serif|Open+Sans" rel="stylesheet">
         <link rel="stylesheet" href="/css/uikit.css">
         <link rel="stylesheet" href="/css/partials/header.css">
         <link rel="stylesheet" href="/css/partials/anime_title_search.css">
@@ -11,29 +12,234 @@
         <script type="text/javascript" src="/js/bindings.js" defer></script>
         <script type="text/javascript" src="/js/index.js" defer></script>
         <style>
+            /* General */
             * {
                 box-sizing: border-box;
             }
-            .uk-container {
-                padding: 0;
+            
+            .title-search-wrapper {
+                padding-right: 8px;
+                text-align: center;
             }
-            .main .uk-container-center {
+            
+            @media (min-width: 480px) {
+                .title-search-wrapper {
+                    text-align: right;
+                }
+            }
+            
+            .container {
+                padding: 0;
+                max-width: 1200px;
+            }
+            
+            @media (orientation: portrait) {
+                .container {
+                    max-width: 100%;
+                }    
+            }
+            
+            .main-section-heading {
+                font-family: "Open Sans", sans-serif;
+                font-size: 1.6em;
+            }
+            
+            .content {
+                min-height: 700px;    
+            }
+            
+            .main {
+                padding-top: 32px;
+                background-color: #F4F4F4;    
+            }
+        
+            .main, .card-holder {
+                margin-left: 0;
+            }
+            
+            .main > *, .card-holder > * {
+                padding-left: 0;    
+            }
+            
+            form {
                 background-color: #FFF;
             }
-            .main {
-                padding-top: 1.6em;
-                height: 100vh;
+            
+            @media (min-width: 768px) {
+                section .wrapper {
+                    display: inline-block;
+                }
+            }
+            
+            .result-wrapper {
+                margin-left: -8px;    
+            }
+            
+            /* Cards */
+            .anime-item {
+                margin-bottom: 32px;
+                text-align: center;
+                position: relative;
+                width: 33.3%;
+                padding: 8px;
+            }
+            
+            .show-link {
+                color: #444;
+                transition: color 0.2s ease-out;
+            }
+            
+            .show-link:hover {
+                text-decoration: none;
+                color: #d8b573;
+            }
+            
+            @media (orientation: portrait) and (max-width: 480px) {
+                .anime-item {
+                    width: 100%;
+                }
+            }
+            
+            a:hover .anime-poster {
+                opacity: .90;    
+            }
+            
+            .anime-poster {
+                width: 100%;
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
+            
+            @media (orientation: portrait), (orientation: landscape) {
+                .anime-poster {
+                    height: 270px;
+                }
+            }
+            
+            @media (orientation: portrait) and (max-width: 480px) {
+                .anime-poster {
+                    height: 400px;
+                }
+            }
+            
+            @media (min-width: 768px) and (orientation: landscape) {
+                .anime-poster {
+                    height: 290px;
+                }
+            }
+            
+            @media (min-width: 968px) and (orientation: landscape) {
+                .anime-poster {
+                    height: 388px;
+                }
+            }
+            
+            .anime-title {
+                font-size: 1em;
+                font-family: "Noto Serif", "serif";
+                margin-top: 12px;
+                font-weight: normal;
+                padding: 0 8px;
+            }
+            
+            .anime-genres {
+                color: grey;
+                padding: 0 4px;
+                position: absolute;
+                top: 0;
+                left: 8%;
                 background-color: #f4f4f4;
+                max-width: 80%;
+                text-align: left;
+                display: none;
+            }
+            
+            @media (min-width: 480px) {
+                .anime-item {
+                    padding: 0 8px;
+                }
+            }
+            
+            /* Pagination */
+            .pagination-controls:after {
+                content: "";
+                display: block;
+                clear: both;
+            }
+            
+            .pagination-controls a {
+                color: #444;
+                text-decoration: none;
+            }
+            
+            .pagination-controls a:hover {
+                color: #d8b573;
+            }
+            
+            .previous, .next {
+                transition: color 0.2s ease-out;
+            }
+            
+            .previous:hover, .next:hover {
+                color: #d8b573;
+            }
+            
+            .previous {
+                float: left;
+            }
+            
+            .uk-icon-long-arrow-left {
+                margin-right: 16px;
+            }
+            
+            .next {
+                float: right;    
+            }
+            
+            .uk-icon-long-arrow-right {
+                margin-left: 16px;
             }
         </style>
     </head>
-    <body id="body">
-        <div class="uk-container uk-container-center"
+    <body id="body" class="index-page">
+        <div class="uk-container uk-container-center container">
             <%= @header %>
-            <%= @site_search_partial %>
-            <section class="main">
-                <div class="uk-width-medium-1-2 uk-container-center">
-                </div>    
+            <%= @title_search_partial %>
+            <section class="uk-grid uk-width-1-1 main">
+                <div class="uk-width-small-4-5 uk-container-center center">
+                    <% if Array === @search_results %>
+                        <h2 class="main-section-heading">Top Rated Anime</h2>
+                        <div class="wrapper uk-width-1-1">
+                            <div class="result-wrapper uk-grid card-holder">
+                                <% @search_results.each do |result| %>
+                                    <div class="anime-item card">
+                                        <div class="card-content-wrapper">
+                                            <a class="show-link" href=<%= '/show/' + "#{result['id']}" %>>
+                                                <div class="anime-poster" style=<%= "background-image:url(#{result['image_url_lge']})" %>></div>
+                                            </a>
+                                            <div class="card-text">
+                                                <h2 class="anime-title"><a class="show-link" href=<%= '/show/' + "#{result['id']}" %>><%= result['title_english'] %></a></h2>
+                                                <p class="anime-genres">
+                                                    <%= result['genres'].join(', ') %>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% end %>
+                            </div>
+                            <div class="pagination-controls">
+                                <% if @is_previous_button_visible %>
+                                  <span class="previous"><a href=<%= "/?page=#{ @pageNumber - 1 }"%>><i class="uk-icon-long-arrow-left"></i>Previous</a></span>
+                                <% end %>
+                                <% if @is_next_button_visible %>
+                                  <span class="next"><a href=<%= "/?page=#{ @pageNumber + 1 }"%>>Next<i class="uk-icon-long-arrow-right"></i></a></span>
+                                <% end %>
+                            </div>
+                        </div>
+                    <% else %>
+                        
+                    <% end %>
+                </div>
             </section>
             <%= @footer %>
         </div>
