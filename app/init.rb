@@ -28,6 +28,39 @@ helpers do
   end
 end
 
+not_found do
+  @error = '404: Page Not Found'
+  @message = 'Sorry, we could not find the requested page'
+  @site_search_partial = erb :anime_title_search_partial
+  @header = erb :header
+  @footer = erb :footer
+  
+  status 404
+  erb :error 
+end
+
+error 403 do
+  @error = '403: Forbidden'
+  @message = 'Sorry, you do not have permission to view this page'
+  @site_search_partial = erb :anime_title_search_partial
+  @header = erb :header
+  @footer = erb :footer
+  
+  status 403
+  erb :error
+end
+
+error 500 do
+  @error = '500: Internal Server Error'
+  @message = 'Sorry, this page cannot be displayed'
+  @site_search_partial = erb :anime_title_search_partial
+  @header = erb :header
+  @footer = erb :footer
+  
+  status 500
+  erb :error
+end
+
 before "/*" do
   @authorized = !session['access_token'].nil?
   @username = session['username']
