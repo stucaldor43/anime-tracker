@@ -10,11 +10,17 @@ class AniListApiCommunicator
    end
    
    def update_token
-     path = '/auth/access_token'
      post_params = {'grant_type' => 'client_credentials', 
                         'client_id' => ENV['CLIENT_ID'], 
                         'client_secret' => ENV['CLIENT_SECRET']}
-     res = make_post_request(path, post_params)
+                        
+     uri = URI("https://anilist.co/api/auth/access_token")
+     req = Net::HTTP::Post.new(uri)
+     req.set_form_data(post_params)
+     
+     res = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|                                                         
+       http.request(req)
+     end
      
      if res.code.to_i == 200
        @access_token = JSON.parse("#{res.body}")['access_token']
@@ -39,25 +45,9 @@ class AniListApiCommunicator
         res
      else
         update_token
-        Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|                                                         
-         http.request(req)
-        end 
-     end
-   end
-   
-   def make_post_request(path, post_parameters)
-     uri = URI("https://anilist.co/api#{path}")
-     req = Net::HTTP::Post.new(uri)
-     req.set_form_data(post_parameters)
-     
-     res = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|                                                         
-       http.request(req)
-     end
-     
-     if res.code.to_i == 200
-        res
-     else
-        update_token
+        path_with_token = (path.index('?')) ? "#{path}&access_token=#{access_token}" : "#{path}?access_token=#{access_token}"
+        uri = URI("https://anilist.co/api#{path_with_token}")
+        req = Net::HTTP::Get.new(uri)
         Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|                                                         
          http.request(req)
         end 

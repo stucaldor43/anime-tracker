@@ -59,7 +59,9 @@ module Utilities
         res
       else
         refresh_anilist_access_token
-        http.request(request)
+        fresh_request = Net::HTTP::Get.new(uri)
+        fresh_request['Authorization'] = "#{session['token_type'].capitalize} #{session['access_token']}"
+        http.request(fresh_request)
       end
     end
   end
@@ -81,7 +83,9 @@ module Utilities
         res
       else
         refresh_anilist_access_token
-        http.request(request)
+        fresh_request = Net::HTTP::Get.new(uri)
+        fresh_request['Authorization'] = "#{session['token_type'].capitalize} #{session['access_token']}"
+        http.request(fresh_request)
       end
     end  
   end
@@ -103,7 +107,9 @@ module Utilities
         res
       else
         refresh_anilist_access_token
-        http.request(request)
+        fresh_request = Net::HTTP::Get.new(uri)
+        fresh_request['Authorization'] = "#{session['token_type'].capitalize} #{session['access_token']}"
+        http.request(fresh_request)
       end
     end  
   end
@@ -124,7 +130,9 @@ module Utilities
         res
       else
         refresh_anilist_access_token
-        http.request(request)
+        fresh_request = Net::HTTP::Get.new(uri)
+        fresh_request['Authorization'] = "#{session['token_type'].capitalize} #{session['access_token']}"
+        http.request(fresh_request)
       end
     end
   end
@@ -136,11 +144,28 @@ module Utilities
       "client_secret" => ENV['CLIENT_SECRET'],
       "refresh_token" => session['refresh_token']
     }
-    res = make_anilist_post_request('/auth/access_token', form_data)
+    
+    uri = URI.parse("https://anilist.co/api/auth/access_token")
+    request = Net::HTTP::Post.new(uri)
+    request.set_form_data(form_data)
+    
+    if session['access_token']
+      request['Authorization'] = "#{session['token_type'].capitalize} #{session['access_token']}"
+    end
+    
+    req_options = {
+      use_ssl: uri.scheme == "https",
+    }
+    
+    res = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      http.request(request)
+    end
+    
     return if !((200..299) === res.code.to_i)
     
     credentials = JSON.parse(res.body)
     session['access_token'] = credentials['access_token']
+    env['rack.session.unpacked_cookie_data']['access_token'] = credentials['access_token']
   end
   
   def create_animelist_put_data(original_hash, new_hash)
