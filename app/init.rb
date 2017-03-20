@@ -9,11 +9,11 @@ configure do
 end
 
 # required to ensure that not found page is only rendered if no other route matches the request url
-route_filenames = Dir.glob(['controllers/*.rb', 'api/*.rb']).reduce([]) do |queue,filename|
-  (filename.index('not_found')) ?  queue.push(filename) : queue.unshift(filename)
+route_filenames = Dir.glob(['controllers/*.rb', 'api/*.rb']).reduce([]) do |stack,filename|
+  stack.push(filename)
 end
 
-route_filenames.each do |filename|
+route_filenames.sort.each do |filename|
   load filename
 end
 

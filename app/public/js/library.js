@@ -194,6 +194,7 @@
     					return {
     						coverImage: animeListRecord.anime.image_url_lge,
     						rating: animeListRecord.anime.average_score,
+    						airingStatus: animeListRecord.anime.airing_status.trim(),
     						status: animeListRecord.list_status,
     						title: animeListRecord.anime.title_english,
     						episodesWatched: animeListRecord.episodes_watched,

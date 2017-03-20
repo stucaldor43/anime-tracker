@@ -33,7 +33,7 @@ module Utilities
       "code" => code,
     }
     res = make_anilist_post_request('/auth/access_token', form_data)
-    return if !((200..299) === res.code.to_i)
+    return unless (200..299) === res.code.to_i
     
     credentials = JSON.parse(res.body)
     session['access_token'] = credentials['access_token']
