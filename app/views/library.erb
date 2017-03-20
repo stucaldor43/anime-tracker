@@ -301,7 +301,12 @@
                         </div>
                         <div class="uk-clearfix">
                             <div class="community-rating">
-                                <span><i class="uk-icon-star">{{ Math.floor(item.rating)  }}</i></span>
+                                <div v-if="item.airingStatus === 'not yet aired'">
+                                    <span><i class="uk-icon-star"></i></span>
+                                </div>
+                                <div v-else>
+                                    <span>{{ Math.floor(item.rating / 10)  }}<i class="uk-icon-star"></i></span>
+                                </div>
                             </div>
                             <div class="status-dropdown-container" style="position: relative" data-uk-dropdown="{mode: 'click'}">
                                 <button class="uk-button dropdown-trigger-button">Change Status<i class="uk-icon-angle-down"></i></button>
@@ -349,7 +354,12 @@
                             <div class="show-title"><a href="/show/{{ item.id }}">{{ item.title }}</a></div>
                         </div>
                         <div class="community-rating">
-                            <span><i class="uk-icon-star">{{ Math.floor(item.rating)  }}</i></span>
+                            <div v-if="item.airingStatus === 'not yet aired'">
+                                <span><i class="uk-icon-star"></i></span>
+                            </div>
+                            <div v-else>
+                                <span>{{ Math.floor(item.rating / 10)  }}<i class="uk-icon-star"></i></span>
+                            </div>
                         </div>
                     </div>
                 </div>

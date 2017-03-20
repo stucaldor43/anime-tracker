@@ -80,8 +80,12 @@
                         <div class="anime-info-wrapper">
                             <h2 class="anime-title"><%= @anime['title_english'] %></h2>
                             <div class="anime-star-rating">
-                                <%= "#{(@anime['average_score'] / 10).round} / 10" %>
-                                <i class="uk-icon-star"></i>
+                                <% if @anime['airing_status'].strip == "not yet aired" %>
+                                    <span><i class="uk-icon-star"></i></span>
+                                <% else %>
+                                    <span><%= "#{((@anime['average_score'] ? @anime['average_score'] : 0 )  / 10).round}" %>
+                                    <i class="uk-icon-star"></i></span>
+                                <% end %>
                             </div>
                             <div>
                                 <span class="anime-type">
