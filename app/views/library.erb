@@ -242,25 +242,28 @@
                        </div>
                    </li>
                    <li id="activity-feed">
-                       <div v-for="item in feed">
-                           <div>
-                               <p v-show="item.status === 'watched episode'">
-                                   {{ username }} finished watching episode {{ item.value }} of <a :href="'/show/' + item.id">{{ item.title }}</a>
-                               </p>
-                               <p v-show="item.status === 'plans to watch'">
-                                   {{ username }} plans to watch <a :href="'/show/' + item.id">{{ item.title }}</a>
-                               </p>
-                               <p v-show="item.status === 'completed'">
-                                   {{ username }} completed <a :href="'/show/' + item.id">{{ item.title }}</a>
-                               </p>
-                               <p v-show="item.status === 'paused watching'">
-                                   {{ username }} has put <a :href="'/show/' + item.id">{{ item.title }}</a> on hold
-                               </p>
-                               <p v-show="item.status === 'dropped'">
-                                   {{ username }} has dropped <a :href="'/show/' + item.id">{{ item.title }}</a>
-                               </p>
-                           </div>
-                        </div>
+                       <ul v-for="item in feed">
+                           <li v-if="item.status === 'watched episode'">
+                               <p>{{ username }} finished watching episode {{ item.episodeNumber }} of <a :href="'/show/' + item.id">{{ item.title }}</a></p>
+                               <span class="activity-date">{{ item.dateCreated }}</span>
+                           </li>
+                           <li v-if="item.status === 'plans to watch'">
+                               <p>{{ username }} plans to watch <a :href="'/show/' + item.id">{{ item.title }}</a></p>
+                               <span class="activity-date">{{ item.dateCreated }}</span>
+                           </li>
+                           <li v-if="item.status === 'completed'">
+                               <p>{{ username }} completed <a :href="'/show/' + item.id">{{ item.title }}</a></p>
+                               <span class="activity-date">{{ item.dateCreated }}</span>
+                           </li>
+                           <li v-if="item.status === 'paused watching'">
+                               <p>{{ username }} has put <a :href="'/show/' + item.id">{{ item.title }}</a> on hold</p>
+                               <span class="activity-date">{{ item.dateCreated }}</span>
+                           </li>
+                           <li v-if="item.status === 'dropped'">
+                               <p>{{ username }} has dropped <a :href="'/show/' + item.id">{{ item.title }}</a></p>
+                               <span class="activity-date">{{ item.dateCreated }}</span>
+                           </li>
+                        </ul>
                    </li>
                 </ul>
             </div>

@@ -1,6 +1,8 @@
 require 'json'
 require 'net/http'
 require 'uri'
+require_relative './../modules/timeago'
+require_relative './../models/FeedItem'
 
 get '/api/partials/anime-title-search-partial' do
   erb :anime_title_search_partial
@@ -12,10 +14,21 @@ end
 
 get '/api/feed/:username' do
   res = settings.anilist_communicator.make_get_request("/user/#{params['username']}/activity")
+  feed_items = JSON.parse(res.body).
+    map do |activity|
+      activity['created_at'] = Date::parse(activity['created_at']).to_time.relative_time
+      FeedItem.new({
+        id: activity['series']['id'], 
+        title: activity['series']['title_english'], 
+        status: activity['status'], 
+        date_created: activity['created_at'], 
+        episode: activity['value']
+      })
+    end
   
   JSON.generate({
       "status": "success", 
-      "data": JSON.parse(res.body)
+      "data": feed_items
   })
 end
 

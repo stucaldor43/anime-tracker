@@ -13,10 +13,10 @@
                         this.feed = JSON.parse(response.body).data.map(function(activity) {
                             return {
                                 status: activity.status,
-                                title: activity.series.title_english,
-                                dateCreated: activity.created_at,
-                                episodeNumber: activity.value || null,
-                                id: activity.series.id
+                                title: activity.title,
+                                dateCreated: activity.timeAgo,
+                                episodeNumber: activity.episodeNumber || null,
+                                id: activity.id
                             };
                         });
                     }.bind(this));    
@@ -29,10 +29,10 @@
                 this.feed = JSON.parse(response.body).data.map(function(activity) {
                     return {
                         status: activity.status,
-                        title: activity.series.title_english,
-                        dateCreated: activity.created_at,
-                        episodeNumber: activity.value || null,
-                        id: activity.series.id
+                        title: activity.title,
+                        dateCreated: activity.timeAgo,
+                        episodeNumber: activity.episodeNumber || null,
+                        id: activity.id
                     };
                 });
             }.bind(this));
